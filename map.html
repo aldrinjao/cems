@@ -123,14 +123,14 @@
             <div style="width: 100%;margin: auto;width: 100%;" class="tooltip">
                 <span style="font-size: 16px;padding:10px;" class="clickabletitle">Boundaries</span>
                 <span class="tooltiptext">Administrative Boundaries of the Phillipines<br><br>Click on the buttons to
-                    see regional, provincial, municipal, or barangay borders.</span>
+                    see regional, provincial, or municipal borders.</span>
 
             </div>
 
-            <div id="locreg" class='boundarybutton bbleft selected' onclick="locButtonSelected(this)">Region</div>
-            <div id="locprov" class='boundarybutton bbright' onclick="locButtonSelected(this)">Province</div>
+            <div id="locreg" class='boundarybutton bbleft' onclick="locButtonSelected(this)">Region</div>
+            <div id="locprov" class='boundarybutton bbright  selected' onclick="locButtonSelected(this)">Province</div>
             <div id="locmun" class='boundarybutton bbleft' onclick="locButtonSelected(this)">Municipality</div>
-            <div id="locbrg" class='boundarybutton bbright' onclick="locButtonSelected(this)">Barangay</div>
+            <div id="locbrg" class='boundarybutton bbright' onclick="locButtonSelected(this)">None</div>
         </div>
 
         <div id="issuesPanel">
@@ -202,7 +202,7 @@
 
                 </div>
                 <div style="float: left;width:70%;margin-left:5px;margin-top:10px;" class="clickabletitle tooltip">
-                    Cluster Count
+                    Incident Count
                     <span class="tooltiptext tooltiptextincident">These numbered markers show how many individual
                         reports there are around the area.</span>
                 </div>
@@ -230,11 +230,11 @@
         </div>
 
 
-        <div id="panelfooter" style="margin-top:20px;display:flex;align-items:flex-end;justify-content: center;">
+        <div id="panelfooter" style="margin-top:0px;display:flex;align-items:flex-end;justify-content: center;">
 
             <div>
                 <a href="https://www.international-alert.org/" target="new">
-                    <img src="./icons/alert-logo.png" width="40px">
+                    <img src="./icons/alert-logo.png" width="60px">
                 </a>
             </div>
             <div>
@@ -257,7 +257,7 @@
             </div>
             <div style="margin:5px;">
                 <a target="new"
-                    href="https://twitter.com/home?status=https://conflictalert.info/cems-covid-19-map/ Critical Events Monitoring System - Map of COVID-19 Related Incidents"
+                    href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fconflictalert.info%2Fcems-covid-19-map%2F&text=Check%20this%20out!%20Critical%20Events%20Monitoring%20System%20-%20Map%20of%20COVID-19%20Related%20Incidents"
                     title="Tweet this page"><img src="./icons/twitter.svg" width="25px"></a>
             </div>
 
@@ -376,9 +376,7 @@
         "Carto DB (grayscale map)": positron,
         "Google Satellite (satellite image)": googleSat,
         "Google Streets (digitized and labeled)": googleStreets,
-        "Google Hyybrid (satellite with labels)": googleHybrid,
-        "Google Terrain (digital with elevation info)": googleTerrain,
-        "Open Street Maps (opensource digitized and labeled)": osm
+        "Google Terrain (digitized with elevation info)": googleTerrain,
     };
 
     var overlays = {
@@ -387,7 +385,7 @@
     L.control.layers(baseMaps, overlays).addTo(map);
 
     // add initial overlay 
-    geojson = L.geoJson(regionaldata, {
+    geojson = L.geoJson(provincialdata, {
         style: style1,
         onEachFeature: onEachFeature
     }).addTo(map);
@@ -585,8 +583,10 @@
                 temp = '#9e0000';
             }
 
+            var temptitle = allIssues[i].barangay + " | " + allIssues[i].city + " | " + allIssues[i].municipality + " | " + allIssues[i].province + " | " + allIssues[i].issue;
+
             var markerOptions = {
-                title: allIssues[i].barangay + " | " + allIssues[i].city + " | " + allIssues[i].municipality + " | " + allIssues[i].province,
+                title: temptitle,
                 radius: 8,
                 fillColor: temp,
                 color: "#000000",
@@ -713,22 +713,30 @@
     function switchlayer(layer) {
         map.removeLayer(geojson);
 
-        if (layer == 'locreg') {
-            layer = regionaldata;
 
-        } else if (layer == 'locmun') {
-            layer = municipaldata;
-        } else if (layer == 'locprov') {
-            layer = provincialdata;
-        } else if (layer == 'locbrg') {
-            layer = brgcov;
+        if (layer == 'locbrg') {
+	        document.getElementById('show').classList.remove('selected');
+	        document.getElementById('dontshow').classList.add('selected');
+            currentstlye = style1
+            map.removeControl(legend);
+
+        }else{
+	        if (layer == 'locreg') {
+	            layer = regionaldata;
+
+	        } else if (layer == 'locmun') {
+	            layer = municipaldata;
+	        } else if (layer == 'locprov') {
+	            layer = provincialdata;
+	        }
+
+	        geojson = L.geoJson(layer, {
+	            style: currentstlye,
+	            onEachFeature: onEachFeature
+
+	        }).addTo(map);
         }
 
-        geojson = L.geoJson(layer, {
-            style: currentstlye,
-            onEachFeature: onEachFeature
-
-        }).addTo(map);
 
 
     }
