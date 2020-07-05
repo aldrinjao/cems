@@ -1,0 +1,14 @@
+{
+"name": "brgy",
+"description": "brgy",
+"version": "2",
+"minzoom": "0",
+"maxzoom": "9",
+"center": "121.289062,14.264126,9",
+"bounds": "116.928337,4.586940,126.605347,21.070141",
+"type": "overlay",
+"format": "pbf",
+"generator": "tippecanoe v1.35.0",
+"generator_options": "tippecanoe -zg -e brgy --drop-densest-as-needed brgy.geojson",
+"json": "{\"vector_layers\": [ { \"id\": \"brgy\", \"description\": \"\", \"minzoom\": 0, \"maxzoom\": 9, \"fields\": {\"NAME_3\": \"String\"} } ],\"tilestats\": {\"layerCount\": 1,\"layers\": [{\"layer\": \"brgy\",\"count\": 41933,\"geometry\": \"Polygon\",\"attributeCount\": 1,\"attributes\": [{\"attribute\": \"NAME_3\",\"count\": 1000,\"type\": \"string\",\"values\": [\"50th District\",\"A-Et\",\"A. Beltran\",\"A. Bonifacio\",\"A. Bonifacio-Caguioa-Rimando\",\"A. Dalusag\",\"A. Mabini\",\"A. O. Floirendo\",\"A.Bonifacio\",\"A.Pascual\",\"A.Rivera\",\"AGROCEL Pob\",\"Ab-Abut\",\"Ababa-An\",\"Abaca\",\"Abaccan\",\"Abachanan\",\"Abad Santos\",\"Abaga\",\"Abagao\",\"Abagat\",\"Abagon\",\"Abanao-Zandueta-Kayong-Chugum-Otek\",\"Abang\",\"Abang-Abang\",\"Abangan Norte\",\"Abangan Sur\",\"Abangay\",\"Abango\",\"Abanilla\",\"Abanon\",\"Abanqueruan\",\"Abante\",\"Abaquid\",\"Abar 2nd\",\"Abar Ist\",\"Abariongan Ruar\",\"Abariongan Uneg\",\"Abaroan\",\"Abas\",\"Abat\",\"Abatan\",\"Abaton\",\"Abay\",\"Abaya\",\"Abbag\",\"Abbeg\",\"Abdullah Buisan\",\"Abehilan\",\"Abejao\",\"Abella\",\"Abelo\",\"Aberawan\",\"Abeto Mirasol Taft South\",\"Abgao\",\"Abiacao\",\"Abian\",\"Abiang\",\"Abiawin\",\"Abiera\",\"Abihao\",\"Abihid\",\"Abihilan\",\"Abijao\",\"Abijilan\",\"Abijod\",\"Abilan\",\"Abilay\",\"Abilay Norte\",\"Abilay Sur\",\"Abinganan\",\"Abinuan\",\"Abis\",\"Abkir\",\"Ablan Poblacion\",\"Ablan Sarat\",\"Ablang-Sapang\",\"Ablayan\",\"Ableg\",\"Abnate\",\"Abo\",\"Abo-Abo\",\"Abogado\",\"Abolo\",\"Abonagan\",\"Abong\",\"Abong-Abong\",\"Abongan\",\"Abot Molina\",\"Abra\",\"Abre\",\"Abualan\",\"Abuanan\",\"Abucay\",\"Abucay Norte\",\"Abucay Sur\",\"Abucayan\",\"Abucayan Norte\",\"Abucayan Sur\",\"Abugon\"]}]}]}}"
+}
