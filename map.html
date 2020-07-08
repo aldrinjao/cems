@@ -1,14 +1,15 @@
+<script src="./leaflet/leaflet.js"></script>
+
+<script src="./heatmap/heatmap.min.js"></script>
+<script src="./heatmap/leaflet-heatmap.js"></script>
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
     integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
     crossorigin="" />
 
 
-<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-    crossorigin=""></script>
 
 <script src="https://unpkg.com/sql.js@0.3.2/js/sql.js"></script>
-<script src="Leaflet.TileLayer.MBTiles.js"></script>
 
 
 
@@ -18,10 +19,13 @@
 <link rel="stylesheet" href="./mapstyles/mapstyle.css" />
 <link rel="stylesheet" href="./leaflet-search/leaflet-search.css">
 
-
-
 <script src="./marker-cluster/dist/leaflet.markercluster-src.js"></script>
+
 <script src="./leaflet-search/leaflet-search.js"></script>
+
+<script type="text/javascript" src="https://unpkg.com/leaflet.vectorgrid@1.2.0"></script>
+
+
 
 <script src="./data/incidentdata.js"></script>
 <script src="./data/municipaldata.js"></script>
@@ -29,6 +33,7 @@
 <script src="./data/provincialdata.js"></script>
 <script src="./data/date.js"></script>
 <script src="./data/coverage.js"></script>
+<script type="text/javascript" src="./brgy.js"></script>
 
 <style>
     .leaflet-left {
@@ -178,7 +183,7 @@
             <p class="clear">&nbsp;</p>
 
 
-            <div style="margin:10px">
+            <!-- <div style="margin:10px">
                 <div style="float: left;">
                     <input type="checkbox" id="govcbox" onclick="markerCheckBox()">
                     <img src='./icons/green.png' style="width: 20px;">
@@ -189,7 +194,7 @@
                     <span class="tooltiptext tooltiptextincident">Tooltip text</span>
                 </div>
             </div>
-            <p class="clear">&nbsp;</p>
+            <p class="clear">&nbsp;</p> -->
 
             <div style="margin:10px">
                 <div style="float: left;">
@@ -299,7 +304,7 @@
     </div>
 
 
-    <div id="slidecontainerID" class="slidecontainer" onmouseover="disableMapInteraction()"
+    <!-- <div id="slidecontainerID" class="slidecontainer" onmouseover="disableMapInteraction()"
         onmouseout="enableMapInteraction()">
         <div class="clickabletitle tooltip">
             <img class="img-valign" src="./icons/opacity.png" style="height: 13.64px;"> <span>boundary opacity</span>
@@ -309,10 +314,10 @@
         </div>
         <div>
             <img class="img-valign" src="./icons/minus.png" style="margin-top:-13.64;height: 13.64px;"> <input
-                type="range" min="0" max="100" value="30" class="slider" id="myRange" style="width:129px;"> <img
+                type="range" min="0" max="100" value="30" class="slider" id="1myRange" style="width:129px;"> <img
                 class="img-valign" src="./icons/plus.png" style="margin-top:-13.64;height: 13.64px;">
         </div>
-    </div>
+    </div> -->
 
 
 </div>
@@ -339,25 +344,32 @@
     map.createPane('labels');
     map.createPane('markerspane');
     map.createPane('respondents');
-
-
+    map.createPane('boundarypane').style.zIndex = 201;
     map.getPane('respondents').style.zIndex = 300;
     map.getPane('labels').style.zIndex = 500;
     map.getPane('markerspane').style.zIndex = 501;
     map.getPane('labels').style.pointerEvents = 'none';
 
 
-    var currentstlye = style1;
-    L.control.zoom({
-        position: 'topright'
-    }).addTo(map);
+
+    var currentstlye = {
+        fillColor: 'white',
+        weight: 2,
+        opacity: .1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: .3
+    };
+
+
+
 
 
     // initialize basemaps
 
     var positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
         attribution: '©OpenStreetMap, ©CartoDB'
-    });
+    }).addTo(map);
 
     var positronLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
         attribution: '©OpenStreetMap, ©CartoDB',
@@ -385,37 +397,65 @@
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
     });
 
-    var mb = L.tileLayer.mbTiles('./test2.mbtiles', {
-        minZoom: 0,
-        maxZoom: 25
-    }).addTo(map);
+
+    var tensionMarkerGroup = new L.featureGroup({
+        maxZoom: 10,
+        pane: 'markerpane'
+    });
+    var violenceMarkerGroup = new L.featureGroup({
+        pane: 'markerpane'
+    });
 
     var baseMaps = {
         "Carto DB (grayscale map)": positron,
         "Google Satellite (satellite image)": googleSat,
         "Google Streets (digitized and labeled)": googleStreets,
-        "Google Terrain (digitized with elevation info)": googleTerrain,
-        "ww":mb
+        "Google Terrain (digitized with elevation info)": googleTerrain
     };
 
     var overlays = {
         "Carto DB Labels": positronLabels
     }
-    L.control.layers(baseMaps, overlays).addTo(map);
+  
 
     // // add initial overlay 
-    // geojson = L.geoJson(provincialdata, {
-    //     style: style1,
-    //     onEachFeature: onEachFeature
-    // }).addTo(map);
+    geojson = L.geoJson(provincialdata, {
+        style: style1,
+        onEachFeature: onEachFeature,
+        pane: 'boundarypane'
+    }).addTo(map);
 
-    // L.tileLayer('./tiles/{z}/{x}/{y}.png', {
-    //     minZoom:8,
-    //     maxZoom: 20,
-    //     maxNativeZoom: 10,
-    //     tms: false,
-    //     attribution: 'Generated by TilesXYZ'
-    //   }).addTo(map);
+
+
+    var cfg = {
+        // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+        // if scaleRadius is false it will be the constant radius used in pixels
+        "useLocalExtrema": false,
+        gradient: {
+            // enter n keys between 0 and 1 here
+            // for gradient color customization
+            '.2': 'green',
+            '.5': 'blue',
+            '1': 'red'
+        },
+        "radius": .2,
+        "maxOpacity": .8,
+        // scales the radius based on map zoom
+        "scaleRadius": true,
+        // if set to false the heatmap uses the global maximum for colorization
+        // if activated: uses the data maximum within the current map boundaries
+        //   (there will always be a red spot with useLocalExtremas true)
+        // which field name in your data represents the latitude - default "lat"
+        latField: 'lat',
+        // which field name in your data represents the longitude - default "lng"
+        lngField: 'lng',
+        // which field name in your data represents the data value - default "value"
+        valueField: 'count'
+    };
+
+
+
+    var heatmapLayer = new HeatmapOverlay(cfg);
 
 
 
@@ -441,6 +481,9 @@
 
 
     // add markers
+
+
+
 
     var markers = L.markerClusterGroup({
         disableClusteringAtZoom: 13,
@@ -537,7 +580,6 @@
             }
         }
     };
-    info.addTo(map);
 
 
     var legend = L.control({ position: 'topright' });
@@ -558,14 +600,88 @@
         return div;
     };
 
+    var legend2 = L.control({ position: 'topright' });
 
+    legend2.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend'),
+            grades = [1, 25, 50, 100, 200, 500, 1000],
+            labels = [];
+
+        // loop through our density intervals and generate a label with a colored square for each interval
+        div.innerHTML = "Incident Count<br>0 &nbsp  &nbsp 2  &nbsp  &nbsp 5  &nbsp 10< <div id='gradient-legend'></div>";
+
+        return div;
+    };
+
+
+
+
+    var legend3 = L.control({ position: 'topright' });
+
+    legend3.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend');
+
+        // loop through our density intervals and generate a label with a colored square for each interval
+        div.innerHTML = "<div onmouseover='disableMapInteraction()' onmouseout='enableMapInteraction()'><img class='img-valign' src='./icons/opacity.png' style='height: 13.64px;'> <span>Heatmap Opacity</span><br><img class='img-valign' src='./icons/minus.png' style='margin-top:-13.64;height: 13.64px;'><input type='range' min='0' max='100' value='0' class='slider' id='myRange' style='width:129px;'><img class='img-valign' src='./icons/plus.png' style='margin-top:-13.64;height: 13.64px;'></div>";
+
+        return div;
+    };
+
+
+
+
+    var legend4 = L.control({ position: 'topright' });
+
+    legend4.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend');
+
+        // loop through our density intervals and generate a label with a colored square for each interval
+        div.innerHTML = "<div onmouseover='disableMapInteraction()' onmouseout='enableMapInteraction()'><img class='img-valign' src='./icons/opacity.png' style='height: 13.64px;'> <span>Boundary Opacity</span><br><img class='img-valign' src='./icons/minus.png' style='margin-top:-13.64;height: 13.64px;'><input type='range' min='0' max='100' value='30' class='slider' id='1myRange' style='width:129px;'><img class='img-valign' src='./icons/plus.png' style='margin-top:-13.64;height: 13.64px;'></div>";
+
+        return div;
+    };
+
+
+
+
+    map.addControl(legend3);
+
+    map.addControl(legend4);
+
+    map.addControl(legend2);
+
+
+    L.control.zoom({
+        position: 'bottomright'
+    }).addTo(map);
+
+  L.control.layers(baseMaps, overlays,{position:'bottomright'}).addTo(map);
+
+    info.addTo(map);
 
 
     var slider = document.getElementById("myRange");
 
-
     slider.oninput = function () {
 
+        var fillOpacity = (100 - this.value) / 100
+
+        document.getElementsByClassName("leaflet-overlay-pane")[0].style.opacity = fillOpacity.toString();
+
+
+        // geojson.setStyle({
+
+        //     fillOpacity: (100 - this.value) / 100
+        // });
+
+    }
+
+    var slider = document.getElementById("1myRange");
+
+    slider.oninput = function () {
         geojson.setStyle({
 
             fillOpacity: (100 - this.value) / 100
@@ -575,14 +691,17 @@
 
 
 
-
     function showCoverage() {
+
+
+        plotCoverage();
 
         var flag = document.getElementById("respondentcbox").checked;
 
         if (flag) {
-            map.getPane('respondents').style.zIndex = 400;
+            map.getPane('respondents').style.zIndex = 300;
             resGroup.addTo(map);
+
         } else {
             map.getPane('respondents').style.zIndex = 300;
             map.removeLayer(resGroup);
@@ -601,18 +720,15 @@
         if (tencheckBox.checked == true) {
             allIssues = allIssues.concat(tenIssues);
         }
-        if (govcheckBox.checked == true) {
-            allIssues = allIssues.concat(govIssues);
-        }
         if (viocheckBox.checked == true) {
             allIssues = allIssues.concat(vioIssues);
         }
-        markers.clearLayers();
+        tensionMarkerGroup.clearLayers();
+        violenceMarkerGroup.clearLayers();
 
         createMarkers();
-
-
-        // markers.addTo(map);
+        hideMarkersOnZoom();
+        createHeatMapLayer(allIssues, heatmapLayer);
     }
 
 
@@ -622,13 +738,13 @@
 
         for (var i = 0; i < allIssues.length; i++) {
 
-            var temp;
+
             var temptitle = allIssues[i].barangay + " | " + allIssues[i].city + " | " + allIssues[i].municipality + " | " + allIssues[i].province + " | " + allIssues[i].issue;
 
             var markerOptions = {
                 title: temptitle,
-                radius: 8,
-                fillColor: temp,
+                radius: 5,
+                fillColor: allIssues[i].color,
                 color: "#000000",
                 fillOpacity: 1,
                 weight: 2,
@@ -636,8 +752,6 @@
                 type: allIssues[i].issue
 
             };
-
-
 
 
             var town;
@@ -655,31 +769,26 @@
 
 
             if (allIssues[i].issue == 'Tensions') {
-                temp = '#ffba00';
                 var marker = L.circleMarker(new L.LatLng(allIssues[i].lat, allIssues[i].lng), markerOptions);
                 marker.bindPopup(popuphtml);
-                markers.addLayer(marker);
+                tensionMarkerGroup.addLayer(marker);
 
-            } else if (allIssues[i].issue == 'Government/Private sector response') {
-                temp = '#477827';;
-                var marker = L.circleMarker(new L.LatLng(allIssues[i].lat, allIssues[i].lng), markerOptions);
-                marker.bindPopup(popuphtml);
-                // markers2.addLayer(marker)
+                // } else if (allIssues[i].issue == 'Government/Private sector response') {
+                //     var marker = L.circleMarker(new L.LatLng(allIssues[i].lat, allIssues[i].lng), markerOptions);
+                //     marker.bindPopup(popuphtml);
 
             } else if (allIssues[i].issue == 'Violence') {
-                temp = '#9e0000';
                 var marker = L.circleMarker(new L.LatLng(allIssues[i].lat, allIssues[i].lng), markerOptions);
                 marker.bindPopup(popuphtml);
-                markers.addLayer(marker);
+                violenceMarkerGroup.addLayer(marker);
 
             }
 
 
-
-
         }
 
-        map.addLayer(markers);
+        map.addLayer(tensionMarkerGroup);
+        map.addLayer(violenceMarkerGroup);
         // map.addLayer(markers2);
 
 
@@ -716,8 +825,13 @@
 
 
     function style0(feature) {
-        var opacity = (100 - document.getElementById("myRange").value) / 100;
+        var opacity
+        if (document.getElementById("1myRange") != null) {
+            opacity = (100 - document.getElementById("1myRange").value) / 100;
+        } else {
+            opacity = ".9";
 
+        }
         return {
             fillColor: getColor(feature.properties.covidcases),
             weight: 2,
@@ -730,7 +844,14 @@
 
 
     function style1() {
-        var opacity = (100 - document.getElementById("myRange").value) / 100;
+
+        var opacity
+        if (document.getElementById("1myRange") != null) {
+            opacity = (100 - document.getElementById("1myRange").value) / 100;
+        } else {
+            opacity = ".3";
+
+        }
 
         return {
             fillColor: 'white',
@@ -797,7 +918,8 @@
 
             geojson = L.geoJson(layer, {
                 style: currentstlye,
-                onEachFeature: onEachFeature
+                onEachFeature: onEachFeature,
+                pane: 'boundarypane'
 
             }).addTo(map);
         }
@@ -837,7 +959,6 @@
             currentstlye = style0
 
             map.addControl(legend);
-
         }
         geojson.setStyle(currentstlye);
     }
@@ -914,20 +1035,52 @@
     }
 
 
+
+    function arrangeIssuesData(data) {
+        var heatMapData = { max: 10, data: [{}] };
+        for (let index = 0; index < data.length; index++) {
+            const element = data[index];
+
+            heatMapData.data[index] = { lat: data[index].lat, lng: data[index].lng, count: 1 }
+
+        }
+
+
+        return heatMapData;
+    }
+
+
+    function createHeatMapLayer(data, maplayer) {
+
+        map.removeLayer(maplayer);
+
+        if (data.length > 0) {
+
+            maplayer.setData(arrangeIssuesData(data));
+            maplayer.addTo(map);
+
+        }
+
+
+        // enable event forwarding
+    }
+
+
+
     var resGroup = L.layerGroup();
-    plotCoverage();
+
     function plotCoverage() {
 
-        var tempcolor = "#14B7FB";
+
 
 
         for (let i = 0; i < coverage.length; i++) {
 
-            var circle = L.circle([coverage[i].lat, coverage[i].lng], {
+            var circle = L.circleMarker([coverage[i].lat, coverage[i].lng], {
                 opacity: 0,
-                fillColor: tempcolor,
+                fillColor: "#14B7FB",
                 fillOpacity: 0.5,
-                radius: 10000,
+                radius: 10,
                 pane: 'respondents'
             }).addTo(resGroup);
 
@@ -937,4 +1090,83 @@
 
     }
 
+
+    function hideMarkersOnZoom() {
+
+        var zoom = map.getZoom();
+        if (zoom < 9 && map.hasLayer(tensionMarkerGroup)) {
+            map.removeLayer(tensionMarkerGroup);
+        }
+        if (zoom > 9 && map.hasLayer(tensionMarkerGroup) == false) {
+            map.addLayer(tensionMarkerGroup);
+
+        }
+        if (zoom < 9 && map.hasLayer(violenceMarkerGroup)) {
+            map.removeLayer(violenceMarkerGroup);
+        }
+        if (zoom > 9 && map.hasLayer(violenceMarkerGroup) == false) {
+            map.addLayer(violenceMarkerGroup);
+        }
+
+    }
+
+    function resizeCircleradius() {
+
+
+        if (map.getZoom() > 8 && map.hasLayer(resGroup)) {
+            resGroup.eachLayer(function (layer) {
+
+                layer.setStyle({
+                    radius: 40,
+                })
+
+            })
+
+        } else {
+            resGroup.eachLayer(function (layer) {
+
+                layer.setStyle({
+                    radius: 10,
+                })
+
+            })
+
+
+        }
+
+    }
+
+    function adjustMarkers() {
+        hideMarkersOnZoom();
+        resizeCircleradius();
+
+    }
+
+
+    map.on('zoomend', adjustMarkers);
+
+
+    var vectorGrid = L.vectorGrid.slicer(brgy_daya, {
+        maxZoom: 15,
+        minZoom: 10,
+        rendererFactory: L.svg.tile,
+        vectorTileLayerStyles: {
+            sliced: function (properties, zoom) {
+                var p = '#FFFFFF';
+                return {
+                    fillColor: '#FF0033',
+                    fillOpacity: 0,
+                    //fillOpacity: 1,
+                    stroke: true,
+                    fill: true,
+                    color: '#000000',
+                    //opacity: 0.2,
+                    weight: 1,
+                }
+            }
+        },
+        interactive: true
+    })
+
+        .addTo(map);
 </script>
