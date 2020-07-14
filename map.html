@@ -12,10 +12,6 @@
 <script src="https://unpkg.com/sql.js@0.3.2/js/sql.js"></script>
 
 
-
-
-<link rel="stylesheet" href="./marker-cluster/dist/MarkerCluster.css" />
-<link rel="stylesheet" href="./marker-cluster/dist/MarkerCluster.Default.css" />
 <link rel="stylesheet" href="./mapstyles/mapstyle.css" />
 <link rel="stylesheet" href="./leaflet-search/leaflet-search.css">
 
@@ -27,19 +23,14 @@
 
 
 
-<script src="./data/incidentdata.js"></script>
-<script src="./data/municipaldata.js"></script>
-<script src="./data/regionaldata.js"></script>
-<script src="./data/provincialdata.js"></script>
-<script src="./data/date.js"></script>
-<script src="./data/coverage.js"></script>
-<script type="text/javascript" src="./brgy.js"></script>
+<script type="text/javascript" src="./data/incidentdata.js"></script>
+<script type="text/javascript" src="./data/municipaldata.js"></script>
+<script type="text/javascript" src="./data/regionaldata.js"></script>
+<script type="text/javascript" src="./data/provincialdata.js"></script>
+<script type="text/javascript" src="./data/date.js"></script>
+<script type="text/javascript" src="./data/coverage.js"></script>
+<script type="text/javascript" src="./data/brgy.js"></script>
 
-<style>
-    .leaflet-left {
-        left: 300;
-    }
-</style>
 <div id="mapid">
 
 
@@ -83,9 +74,8 @@
             <div style="float: left;width: 100px;">
                 <img class="img-valign" src="./icons/tutmarkers.png" style="width: 100px;">
             </div>
-            <div style="float: left;width: 490px;"><span style="font-weight: bold;">Check</span> the checkboxes to
-                display
-                the reported incidents related to
+            <div style="float: left;width: 490px;"><span style="font-weight: bold;">Check</span> the boxes to toggle the
+                displayed reported incidents related to
                 COVID-19</div>
 
         </div>
@@ -93,11 +83,10 @@
 
         <div class="tutItem">
             <div style="float: left;width: 100px;">
-                <img class="img-valign" src="./icons/tutmarker.png" style="width: 100px;">
+                <img class="img-valign" src="./icons/search.png" style="width: 100px;">
             </div>
-            <div style="float: left;width: 490px;"><span style="font-weight: bold;">Click</span> the circle icon on the
-                map to see
-                all reports within that area</div>
+            <div style="float: left;width: 490px;"><span style="font-weight: bold;">Type</span> in the box to search
+                trough the data.</div>
 
         </div>
 
@@ -111,8 +100,14 @@
 
         </div>
 
-        <div style="position: absolute;bottom: 1%;text-align: center;width: 93%;">
-            Click to close
+        <div style="text-align: center;">
+            <img class="img-valign" src="./icons/info.svg" style="height: 34px;padding-right: 20px;"><span>Click this
+                icon located at the menu to see this tutorial again</span>
+        </div>
+
+
+        <div style="position: absolute;bottom: 1%;text-align: center;width: 93%;font-size: .8em;">
+            Click anywhere to close
         </div>
 
 
@@ -131,6 +126,8 @@
             <span style="font-size:20px;line-height: normal;font-weight: 300;"> MAP OF COVID-19 RELATED INCIDENTS</span>
         </div>
 
+
+
         <div id="boundaryPanel">
             <div style="width: 100%;margin: auto;width: 100%;" class="tooltip">
                 <span style="font-size: 16px;padding:10px;" class="clickabletitle">Boundaries</span>
@@ -140,9 +137,12 @@
             </div>
 
             <div id="locreg" class='boundarybutton bbleft' onclick="locButtonSelected(this)">Region</div>
-            <div id="locprov" class='boundarybutton bbright  selected' onclick="locButtonSelected(this)">Province</div>
-            <div id="locmun" class='boundarybutton bbleft' onclick="locButtonSelected(this)">Municipality</div>
-            <div id="locbrg" class='boundarybutton bbright' onclick="locButtonSelected(this)">None</div>
+            <div id="locprov" class='boundarybutton bbright' onclick="locButtonSelected(this)">Province</div>
+            <div id="locmun" class='boundarybutton bbleft selected' onclick="locButtonSelected(this)">Municipality</div>
+            <div id="locbrg" class='boundarybutton bbright' onclick="checkIfZoomed();">Barangay</div>
+            <div id="locnone" class='boundarybutton bbleft' style="margin-left: 25%;" onclick="locButtonSelected(this)">
+                None</div>
+
         </div>
 
         <div id="issuesPanel">
@@ -183,19 +183,6 @@
             <p class="clear">&nbsp;</p>
 
 
-            <!-- <div style="margin:10px">
-                <div style="float: left;">
-                    <input type="checkbox" id="govcbox" onclick="markerCheckBox()">
-                    <img src='./icons/green.png' style="width: 20px;">
-                </div>
-                <div style="float: left;width:70%;margin-left:5px;" class="clickabletitle tooltip"> Government/Private
-                    Sector
-                    Response
-                    <span class="tooltiptext tooltiptextincident">Tooltip text</span>
-                </div>
-            </div>
-            <p class="clear">&nbsp;</p> -->
-
             <div style="margin:10px">
                 <div style="float: left;">
                     <input class="img-valign" type="checkbox" id="respondentcbox" onclick="showCoverage()">
@@ -211,7 +198,7 @@
             <p class="clear">&nbsp;</p>
 
 
-
+            <!-- 
             <div style="margin:10px">
                 <div style="float: left;">
                     <img class="img-valign" src='./icons/cluster.png' style="width: 30px;">
@@ -224,7 +211,7 @@
                     <span class="tooltiptext tooltiptextincident">These numbered markers show how many individual
                         reports there are around the area.</span>
                 </div>
-            </div>
+            </div> -->
 
         </div>
 
@@ -288,11 +275,6 @@
 
             </div>
 
-
-
-
-
-
         </div>
 
 
@@ -332,7 +314,7 @@
         maxZoom: 15
     }
 
-    var map = L.map('mapid', mapOptions).setView([12, 120], 5);
+    var map = L.map('mapid', mapOptions).setView([14.5995, 120.9842], 5);
 
     disableMapInteraction();
 
@@ -340,25 +322,25 @@
 
 
     map.setMaxBounds(map.getBounds());
-    map.setView([12, 120], 6);
+    map.setView([14.5995, 120.9842], 10);
     map.createPane('labels');
     map.createPane('markerspane');
     map.createPane('respondents');
-    map.createPane('boundarypane').style.zIndex = 201;
-    map.getPane('respondents').style.zIndex = 300;
+    map.createPane('boundarypane').style.zIndex = 400;
+    map.getPane('respondents').style.zIndex = 401;
     map.getPane('labels').style.zIndex = 500;
-    map.getPane('markerspane').style.zIndex = 501;
+    map.getPane('markerspane').style.zIndex = 502;
     map.getPane('labels').style.pointerEvents = 'none';
 
 
 
-    var currentstlye = {
+    var currentstyle = {
         fillColor: 'white',
         weight: 2,
-        opacity: .1,
-        color: 'white',
+        opacity: .8,
+        color: 'black',
         dashArray: '3',
-        fillOpacity: .3
+        fillOpacity: 0
     };
 
 
@@ -371,10 +353,17 @@
         attribution: '©OpenStreetMap, ©CartoDB'
     }).addTo(map);
 
+
     var positronLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
         attribution: '©OpenStreetMap, ©CartoDB',
         pane: 'labels'
     }).addTo(map);
+
+
+    var CartoDB_DarkMatterNoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+
+    });
 
 
     var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -407,7 +396,8 @@
     });
 
     var baseMaps = {
-        "Carto DB (grayscale map)": positron,
+        "Carto DB White": positron,
+        "Carto DB Black": CartoDB_DarkMatterNoLabels,
         "Google Satellite (satellite image)": googleSat,
         "Google Streets (digitized and labeled)": googleStreets,
         "Google Terrain (digitized with elevation info)": googleTerrain
@@ -416,16 +406,39 @@
     var overlays = {
         "Carto DB Labels": positronLabels
     }
-  
 
-    // // add initial overlay 
-    geojson = L.geoJson(provincialdata, {
+
+    var vectorGrid = L.vectorGrid.slicer(brgy_daya, {
+        maxZoom: 15,
+        minZoom: 10,
+        rendererFactory: L.svg.tile,
+        vectorTileLayerStyles: {
+            sliced: style1
+        }
+    });
+
+    var municipalLayer = L.geoJson(municipaldata, {
         style: style1,
         onEachFeature: onEachFeature,
         pane: 'boundarypane'
-    }).addTo(map);
+    })
+
+    var provincialLayer = L.geoJson(provincialdata, {
+        style: style1,
+        onEachFeature: onEachFeature,
+        pane: 'boundarypane'
+    })
+
+    var regionalLayer = L.geoJson(regionaldata, {
+        style: style1,
+        onEachFeature: onEachFeature,
+        pane: 'boundarypane'
+    })
 
 
+    // // add initial overlay 
+    geojson = municipalLayer;
+    geojson.addTo(map);
 
     var cfg = {
         // radius should be small ONLY if scaleRadius is true (or small radius is intended)
@@ -434,11 +447,36 @@
         gradient: {
             // enter n keys between 0 and 1 here
             // for gradient color customization
-            '.2': 'green',
-            '.5': 'blue',
-            '1': 'red'
+            '0': '#FFC234',
+            '1': '#FFC234'
         },
-        "radius": .2,
+        "radius": .05,
+        "maxOpacity": .8,
+        // scales the radius based on map zoom
+        "scaleRadius": true,
+        // if set to false the heatmap uses the global maximum for colorization
+        // if activated: uses the data maximum within the current map boundaries
+        //   (there will always be a red spot with useLocalExtremas true)
+        // which field name in your data represents the latitude - default "lat"
+        latField: 'lat',
+        // which field name in your data represents the longitude - default "lng"
+        lngField: 'lng',
+        // which field name in your data represents the data value - default "value"
+        valueField: 'count'
+    };
+
+
+    var cfg2 = {
+        // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+        // if scaleRadius is false it will be the constant radius used in pixels
+        "useLocalExtrema": false,
+        gradient: {
+            // enter n keys between 0 and 1 here
+            // for gradient color customization
+            '0': '#A82C15',
+            '1': '#A82C15'
+        },
+        "radius": .05,
         "maxOpacity": .8,
         // scales the radius based on map zoom
         "scaleRadius": true,
@@ -456,6 +494,7 @@
 
 
     var heatmapLayer = new HeatmapOverlay(cfg);
+    var heatmapLayer2 = new HeatmapOverlay(cfg2);
 
 
 
@@ -479,29 +518,48 @@
     })
 
 
+    // Define an icon called cssIcon
+    var cssIcon = L.divIcon({
+        // Specify a class name we can refer to in CSS.
+        className: 'css-icon',
+        html: '<div class="gps_ring"></div>'
+        // Set marker width and height
+        , iconSize: [140, 140]
+        // ,iconAnchor: [11,11]
+    });
+
+
+    var smallerIcon = L.divIcon({
+        // Specify a class name we can refer to in CSS.
+        className: 'css-icon',
+        html: '<div class="smaller_gps_ring"></div>'
+        // Set marker width and height
+        , iconSize: [50, 50]
+        // ,iconAnchor: [11,11]
+    });
 
     // add markers
 
 
 
 
-    var markers = L.markerClusterGroup({
-        disableClusteringAtZoom: 13,
-        iconCreateFunction: function (cluster) {
-            var violenceount = 0;
-            var tensionscount = 0;
-            var markers222 = cluster.getAllChildMarkers();
+    // var markers = L.markerClusterGroup({
+    //     disableClusteringAtZoom: 13,
+    //     iconCreateFunction: function (cluster) {
+    //         var violenceount = 0;
+    //         var tensionscount = 0;
+    //         var markers222 = cluster.getAllChildMarkers();
 
-            markers222.forEach(element => {
-                if (element.options.type == "Violence") {
-                    violenceount++;
-                } else {
-                    tensionscount++;
-                }
-            });
-            return L.divIcon({ html: '<div class=\'halfmarker\'>' + tensionscount + '<br><span class=\'violencecount\'>' + violenceount + '</span></div>', className: 'testclass' });
-        }
-    });
+    //         markers222.forEach(element => {
+    //             if (element.options.type == "Violence") {
+    //                 violenceount++;
+    //             } else {
+    //                 tensionscount++;
+    //             }
+    //         });
+    //         return L.divIcon({ html: '<div class=\'halfmarker\'>' + tensionscount + '<br><span class=\'violencecount\'>' + violenceount + '</span></div>', className: 'testclass' });
+    //     }
+    // });
 
 
 
@@ -534,12 +592,11 @@
 
 
 
-    markerCheckBox();
 
 
     var controlSearch = new L.Control.Search({
         position: 'topleft',
-        layer: markers,
+        layer: tensionMarkerGroup,
         initial: false,
         zoom: 18,
         marker: L.circleMarker([0, 0], { radius: 30 })
@@ -564,7 +621,7 @@
             this._div.innerHTML = '<h4>Hover over an area</h4>';
 
         } else {
-            if (currentstlye == style0) {
+            if (currentstyle == style0) {
 
                 this._div.innerHTML =
                     '<h4>Covid Cases (May 25, 2020)</h4>' +
@@ -615,8 +672,6 @@
     };
 
 
-
-
     var legend3 = L.control({ position: 'topright' });
 
     legend3.onAdd = function (map) {
@@ -624,7 +679,7 @@
         var div = L.DomUtil.create('div', 'info legend');
 
         // loop through our density intervals and generate a label with a colored square for each interval
-        div.innerHTML = "<div onmouseover='disableMapInteraction()' onmouseout='enableMapInteraction()'><img class='img-valign' src='./icons/opacity.png' style='height: 13.64px;'> <span>Heatmap Opacity</span><br><img class='img-valign' src='./icons/minus.png' style='margin-top:-13.64;height: 13.64px;'><input type='range' min='0' max='100' value='0' class='slider' id='myRange' style='width:129px;'><img class='img-valign' src='./icons/plus.png' style='margin-top:-13.64;height: 13.64px;'></div>";
+        div.innerHTML = "<div onmouseover='disableMapInteraction()' onmouseout='enableMapInteraction()'><img class='img-valign' src='./icons/opacity.png' style='height: 13.64px;'> <span>Heatmap Opacity</span><br><img class='img-valign' src='./icons/minus.png' style='margin-top:-13.64;height: 13.64px;'><input type='range' min='0' max='100' value='80' class='slider' id='myRange' style='width:129px;'><img class='img-valign' src='./icons/plus.png' style='margin-top:-13.64;height: 13.64px;'></div>";
 
         return div;
     };
@@ -639,11 +694,17 @@
         var div = L.DomUtil.create('div', 'info legend');
 
         // loop through our density intervals and generate a label with a colored square for each interval
-        div.innerHTML = "<div onmouseover='disableMapInteraction()' onmouseout='enableMapInteraction()'><img class='img-valign' src='./icons/opacity.png' style='height: 13.64px;'> <span>Boundary Opacity</span><br><img class='img-valign' src='./icons/minus.png' style='margin-top:-13.64;height: 13.64px;'><input type='range' min='0' max='100' value='30' class='slider' id='1myRange' style='width:129px;'><img class='img-valign' src='./icons/plus.png' style='margin-top:-13.64;height: 13.64px;'></div>";
+        div.innerHTML = "<div onmouseover='disableMapInteraction()' onmouseout='enableMapInteraction()'><img class='img-valign' src='./icons/opacity.png' style='height: 13.64px;'> <span>Boundary Opacity</span><br><img class='img-valign' src='./icons/minus.png' style='margin-top:-13.64;height: 13.64px;'><input type='range' min='0' max='100' value='0' class='slider' id='1myRange' style='width:129px;'><img class='img-valign' src='./icons/plus.png' style='margin-top:-13.64;height: 13.64px;'></div>";
 
         return div;
     };
 
+
+    L.control.zoom({
+        position: 'topright'
+    }).addTo(map);
+
+    L.control.layers(baseMaps, overlays, { position: 'topright' }).addTo(map);
 
 
 
@@ -653,29 +714,18 @@
 
     map.addControl(legend2);
 
-
-    L.control.zoom({
-        position: 'bottomright'
-    }).addTo(map);
-
-  L.control.layers(baseMaps, overlays,{position:'bottomright'}).addTo(map);
+    markerCheckBox();
 
     info.addTo(map);
+
+
 
 
     var slider = document.getElementById("myRange");
 
     slider.oninput = function () {
-
-        var fillOpacity = (100 - this.value) / 100
-
+        var fillOpacity = this.value / 100
         document.getElementsByClassName("leaflet-overlay-pane")[0].style.opacity = fillOpacity.toString();
-
-
-        // geojson.setStyle({
-
-        //     fillOpacity: (100 - this.value) / 100
-        // });
 
     }
 
@@ -684,7 +734,7 @@
     slider.oninput = function () {
         geojson.setStyle({
 
-            fillOpacity: (100 - this.value) / 100
+            fillOpacity: this.value / 100
         });
 
     }
@@ -699,11 +749,11 @@
         var flag = document.getElementById("respondentcbox").checked;
 
         if (flag) {
-            map.getPane('respondents').style.zIndex = 300;
+            map.getPane('respondents').style.zIndex = 401;
             resGroup.addTo(map);
 
         } else {
-            map.getPane('respondents').style.zIndex = 300;
+            map.getPane('respondents').style.zIndex = 401;
             map.removeLayer(resGroup);
         }
     }
@@ -716,19 +766,45 @@
         var govcheckBox = document.getElementById("govcbox");
         // Get the output text
 
+
+
         // If the checkbox is checked, display the output text
-        if (tencheckBox.checked == true) {
+        if (tencheckBox.checked) {
             allIssues = allIssues.concat(tenIssues);
         }
-        if (viocheckBox.checked == true) {
+        if (viocheckBox.checked) {
             allIssues = allIssues.concat(vioIssues);
         }
+
+        if (tencheckBox.checked && viocheckBox.checked) {
+            document.getElementById("gradient-legend").style.backgroundImage = "linear-gradient(90deg,rgba(0,0,0,.0), #FF6600)";
+            createHeatMapLayer(tenIssues, vioIssues);
+
+
+        } else if (tencheckBox.checked && !(viocheckBox.checked)) {
+            document.getElementById("gradient-legend").style.backgroundImage = "linear-gradient(90deg,rgba(0,0,0,.0), #FFC234)";
+            createHeatMapLayer(tenIssues, []);
+
+        } else if (!(tencheckBox.checked) && viocheckBox.checked) {
+            document.getElementById("gradient-legend").style.backgroundImage = "linear-gradient(90deg,rgba(0,0,0,.0), #A82C15)";
+            createHeatMapLayer([], vioIssues);
+
+        } else {
+            createHeatMapLayer([], []);
+
+        }
+
+
+
         tensionMarkerGroup.clearLayers();
         violenceMarkerGroup.clearLayers();
 
         createMarkers();
         hideMarkersOnZoom();
-        createHeatMapLayer(allIssues, heatmapLayer);
+
+        // createHeatMapLayer(tenIssues, tenheatmapLayer);
+
+
     }
 
 
@@ -780,7 +856,7 @@
             } else if (allIssues[i].issue == 'Violence') {
                 var marker = L.circleMarker(new L.LatLng(allIssues[i].lat, allIssues[i].lng), markerOptions);
                 marker.bindPopup(popuphtml);
-                violenceMarkerGroup.addLayer(marker);
+                tensionMarkerGroup.addLayer(marker);
 
             }
 
@@ -788,7 +864,7 @@
         }
 
         map.addLayer(tensionMarkerGroup);
-        map.addLayer(violenceMarkerGroup);
+        // map.addLayer(violenceMarkerGroup);
         // map.addLayer(markers2);
 
 
@@ -826,8 +902,9 @@
 
     function style0(feature) {
         var opacity
+
         if (document.getElementById("1myRange") != null) {
-            opacity = (100 - document.getElementById("1myRange").value) / 100;
+            opacity = document.getElementById("1myRange").value/ 100;
         } else {
             opacity = ".9";
 
@@ -847,16 +924,16 @@
 
         var opacity
         if (document.getElementById("1myRange") != null) {
-            opacity = (100 - document.getElementById("1myRange").value) / 100;
+            opacity = document.getElementById("1myRange").value / 100;
         } else {
-            opacity = ".3";
+            opacity = "0";
 
         }
 
         return {
             fillColor: 'white',
             weight: 2,
-            opacity: 1,
+            opacity: .8,
             color: 'black',
             dashArray: '3',
             fillOpacity: opacity
@@ -871,7 +948,6 @@
     }
 
     function resetHighlight(e) {
-        // geojson.resetStyle(e.target);
 
         temp = {
             covidcases: '- ',
@@ -897,33 +973,39 @@
 
 
     function switchlayer(layer) {
-        map.removeLayer(geojson);
 
-
-        if (layer == 'locbrg') {
-            document.getElementById('show').classList.remove('selected');
-            document.getElementById('dontshow').classList.add('selected');
-            currentstlye = style1
-            map.removeControl(legend);
-
-        } else {
-            if (layer == 'locreg') {
-                layer = regionaldata;
-
-            } else if (layer == 'locmun') {
-                layer = municipaldata;
-            } else if (layer == 'locprov') {
-                layer = provincialdata;
-            }
-
-            geojson = L.geoJson(layer, {
-                style: currentstlye,
-                onEachFeature: onEachFeature,
-                pane: 'boundarypane'
-
-            }).addTo(map);
+        if (map.hasLayer(geojson)) {
+            map.removeLayer(geojson)
         }
 
+        if (map.hasLayer(vectorGrid)) {
+            map.removeLayer(vectorGrid);
+        }
+
+        if (layer == 'locnone') {
+            document.getElementById('show').classList.remove('selected');
+            document.getElementById('dontshow').classList.add('selected');
+            currentstyle = style1
+            map.removeControl(legend);
+
+        } else if (layer == 'locreg') {
+            regionalLayer.setStyle(currentstyle);
+            regionalLayer.addTo(map);
+            geojson = regionalLayer;
+
+        } else if (layer == 'locmun') {
+            municipalLayer.setStyle(currentstyle);
+            municipalLayer.addTo(map);
+            geojson = municipalLayer;
+
+        } else if (layer == 'locprov') {
+            provincialLayer.setStyle(currentstyle);
+            provincialLayer.addTo(map);
+            geojson = provincialLayer;
+
+        } else if (layer = 'locbrg') {
+            vectorGrid.addTo(map);
+        }
 
 
     }
@@ -940,7 +1022,7 @@
         document.getElementById('locprov').classList.remove('selected');
         document.getElementById('locmun').classList.remove('selected');
         document.getElementById('locbrg').classList.remove('selected');
-
+        document.getElementById('locnone').classList.remove('selected');
     }
 
     function setSelected(id) {
@@ -952,15 +1034,15 @@
         removeSelected();
         setSelected(t.id);
         if (t.id == 'dontshow') {
-            currentstlye = style1
+            currentstyle = style1
             map.removeControl(legend);
         }
         else {
-            currentstlye = style0
+            currentstyle = style0
 
             map.addControl(legend);
         }
-        geojson.setStyle(currentstlye);
+        geojson.setStyle(currentstyle);
     }
 
 
@@ -1050,17 +1132,28 @@
     }
 
 
-    function createHeatMapLayer(data, maplayer) {
+    function createHeatMapLayer(tensiondata, violencedata) {
 
-        map.removeLayer(maplayer);
+        map.removeLayer(heatmapLayer);
+        this.heatmapLayer = new HeatmapOverlay(cfg);
 
-        if (data.length > 0) {
+        map.removeLayer(heatmapLayer2);
+        this.heatmapLayer2 = new HeatmapOverlay(cfg2);
 
-            maplayer.setData(arrangeIssuesData(data));
-            maplayer.addTo(map);
+        if (tensiondata.length > 0) {
+
+            heatmapLayer.setData(arrangeIssuesData(tensiondata));
+            heatmapLayer.addTo(map);
 
         }
 
+
+        if (violencedata.length > 0) {
+
+            heatmapLayer2.setData(arrangeIssuesData(violencedata));
+            heatmapLayer2.addTo(map);
+
+        }
 
         // enable event forwarding
     }
@@ -1071,19 +1164,16 @@
 
     function plotCoverage() {
 
-
-
+        var iconSize = smallerIcon;
 
         for (let i = 0; i < coverage.length; i++) {
 
-            var circle = L.circleMarker([coverage[i].lat, coverage[i].lng], {
-                opacity: 0,
-                fillColor: "#14B7FB",
-                fillOpacity: 0.5,
-                radius: 10,
-                pane: 'respondents'
-            }).addTo(resGroup);
+            var markerOptions = {
+                icon: iconSize,
+                radius: 10
 
+            }
+            L.marker([coverage[i].lat, coverage[i].lng], markerOptions).addTo(resGroup);
 
         }
 
@@ -1091,54 +1181,115 @@
     }
 
 
+    // change CFG on marker check/uncheck
+
     function hideMarkersOnZoom() {
 
         var zoom = map.getZoom();
-        if (zoom < 9 && map.hasLayer(tensionMarkerGroup)) {
+        if (zoom <= 9 && map.hasLayer(tensionMarkerGroup)) {
             map.removeLayer(tensionMarkerGroup);
+            cfg.radius = 0.15;
+            cfg2.radius = 0.15;
+
+
         }
         if (zoom > 9 && map.hasLayer(tensionMarkerGroup) == false) {
             map.addLayer(tensionMarkerGroup);
+            cfg.radius = 0.15 - (zoom / 100);
+            cfg2.radius = 0.15 - (zoom / 100);
 
         }
-        if (zoom < 9 && map.hasLayer(violenceMarkerGroup)) {
+        if (zoom <= 9 && map.hasLayer(violenceMarkerGroup)) {
             map.removeLayer(violenceMarkerGroup);
+            cfg.radius = 0.15;
+            cfg2.radius = 0.15;
+
+
         }
         if (zoom > 9 && map.hasLayer(violenceMarkerGroup) == false) {
             map.addLayer(violenceMarkerGroup);
+            cfg.radius = 0.15 - (zoom / 100);
+            cfg2.radius = 0.15 - (zoom / 100);
+
         }
+
+
 
     }
 
     function resizeCircleradius() {
 
+        if (map.hasLayer(resGroup)) {
 
-        if (map.getZoom() > 8 && map.hasLayer(resGroup)) {
-            resGroup.eachLayer(function (layer) {
+            if (map.getZoom() < 9) {
+                resGroup.eachLayer(function (layer) {
+                    return layer.setIcon(smallerIcon);
 
-                layer.setStyle({
-                    radius: 40,
                 })
 
-            })
+            } else {
+                resGroup.eachLayer(function (layer) {
+                    return layer.setIcon(cssIcon);
 
-        } else {
-            resGroup.eachLayer(function (layer) {
-
-                layer.setStyle({
-                    radius: 10,
                 })
 
-            })
 
+            }
+        }
+    }
+
+
+    function adjustAdminborders() {
+        var zoom = map.getZoom();
+        var weight = 1;
+        if (zoom >= 9) {
+            weight = 2;
+        }
+        geojson.setStyle({
+            weight: weight
+        });
+
+
+    }
+
+    function switchFromBrgyOnZoom() {
+        var zoom = map.getZoom();
+        if (zoom >= 9) {
+            locButtonSelected(document.getElementById('locmun'));
+        }
+
+    }
+
+
+    function checkIfZoomed() {
+        if (map.getZoom() >= 9) {
+            locButtonSelected(document.getElementById('locbrg'));
 
         }
 
     }
 
+    function disableBrgy() {
+        var zoom = map.getZoom();
+
+        if (zoom < 9) {
+            document.getElementById('locbrg').classList.add("disabledButton");
+        } else {
+
+            document.getElementById('locbrg').classList.remove("disabledButton");
+        }
+    }
+
     function adjustMarkers() {
+
         hideMarkersOnZoom();
+        plotCoverage();
+        adjustAdminborders();
+        switchFromBrgyOnZoom();
+        disableBrgy();
         resizeCircleradius();
+
+
 
     }
 
@@ -1146,27 +1297,7 @@
     map.on('zoomend', adjustMarkers);
 
 
-    var vectorGrid = L.vectorGrid.slicer(brgy_daya, {
-        maxZoom: 15,
-        minZoom: 10,
-        rendererFactory: L.svg.tile,
-        vectorTileLayerStyles: {
-            sliced: function (properties, zoom) {
-                var p = '#FFFFFF';
-                return {
-                    fillColor: '#FF0033',
-                    fillOpacity: 0,
-                    //fillOpacity: 1,
-                    stroke: true,
-                    fill: true,
-                    color: '#000000',
-                    //opacity: 0.2,
-                    weight: 1,
-                }
-            }
-        },
-        interactive: true
-    })
 
-        .addTo(map);
+
+
 </script>
