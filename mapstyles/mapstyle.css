@@ -1,3 +1,6 @@
+body{
+    margin: 0;
+}
 #mapid {
     min-height: 800px;
     height: 100vh;
@@ -22,8 +25,8 @@
 #introModal {
     z-index: 2000;
     width: 700px;
-    min-height: 620px;
-    height: 620px;
+    min-height: 640px;
+    height: 640px;
     background-color: rgba(255, 255, 255, 0.95);
     position: absolute;
     left: 20%;
@@ -39,6 +42,34 @@
     padding: 10px;
 }
 
+
+
+#tutorialModal {
+    z-index: 2000;
+    width: 900px;
+    min-height: 740px;
+    height: 740px;
+    background-color: rgba(255, 255, 255, 0.95);
+    position: absolute;
+    left: 20%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding: 10px;
+    
+}
+
+#tutorialContent{
+overflow: auto;
+padding:0 20px;
+height: 600px;
+}
 .hiddenmodal {
     display: none;
 }
@@ -47,7 +78,7 @@
     z-index: 401;
     width: 250px;
     min-height: 800px;
-    height: 85%;
+    height: 800px;
     position: absolute;
     top: 10px;
     left: 10px;
@@ -102,32 +133,67 @@
     vertical-align: middle;
 }
 
+
+.leaflet-map-pane canvas {
+    z-index: 600;
+}
+
+/* .testClass {
+    width: 40px !important;
+    height: 40px !important;
+    background: linear-gradient(180deg,rgba(248,189,51,.9),rgba(248,189,51,.9) 50%, rgba(166,44,21,.9) 50%);
+    text-align: center;
+    border-radius: 50px;
+    box-shadow: 2px 2px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 0, 0, 0.5); 
+}
+*/
+
+.halfmarker {
+    padding-top: 2px;
+    font-weight: 600;
+}
+
+.violencecount {
+    color: white;
+}
+
 /* end slider */
 .marker-cluster-small {
-    background-color: rgba(24, 78, 81, 0.6);
+    background-color: rgba(255, 255, 81, 0.6);
 }
 
 .marker-cluster-small div {
-    background-color: rgba(24, 78, 81, 0.8);
+    background-color: rgba(255, 255, 81, 0.8);
 }
 
 .marker-cluster-medium {
-    background-color: rgba(24, 78, 81, 0.6);
+    background-color: rgba(124, 78, 81, 0.6);
 }
 
 .marker-cluster-medium div {
-    background-color: rgba(24, 78, 81, 0.8);
+    background-color: rgba(124, 78, 81, 0.8);
 }
 
 .marker-cluster-large {
     background-color: rgba(24, 78, 81, 0.6);
 }
 
-.marker-cluster div {
+.marker-cluster-large div {
     background-color: rgba(24, 78, 81, 0.8);
 }
 
-.marker-cluster span {
+.marker-cluster-small span {
+    color: black;
+    font-weight: bold;
+}
+
+.marker-cluster-medium span {
+    color: white;
+    font-weight: bold;
+}
+
+.marker-cluster-large span {
     color: white;
     font-weight: bold;
 }
@@ -138,7 +204,7 @@
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
     background: white;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     border-radius: 5px;
 }
@@ -148,7 +214,7 @@
     color: #777;
 }
 
-.infoicon{
+.infoicon {
     cursor: pointer;
 }
 
@@ -171,10 +237,20 @@
 }
 
 
+
+#gradient-legend {
+    width: 100px;
+    height: 10px;
+    background-image: linear-gradient(90deg, rgba(0, 0, 0, .0), #FF6600);
+
+}
+
 #apptitle {
     font: 14px/16px Arial, Helvetica, sans-serif;
 
 }
+
+
 
 #boundaryPanel {
 
@@ -183,7 +259,7 @@
     font: 14px/16px Arial, Helvetica, sans-serif;
     background: rgba(250, 250, 250, 0.8);
     border-radius: 5px;
-    height: 100px;
+    height: 150px;
 
 }
 
@@ -204,7 +280,7 @@
     font: 14px/16px Arial, Helvetica, sans-serif;
     background: rgba(250, 250, 250, 0.8);
     border-radius: 5px;
-    height: 240px;
+    height: 150px;
 
 }
 
@@ -232,6 +308,11 @@
     background: gray;
     font-weight: bold;
     color: white;
+}
+
+.disabledButton {
+    color: gray;
+    background: rgb(200, 200, 200);
 }
 
 .clear {
@@ -301,4 +382,71 @@
     left: -190%;
     width: 200px;
 
+}
+
+/* turn off pointer interaction with heatmap so hover still works */
+.leaflet-overlay-pane {
+    pointer-events: none;
+    opacity: 1;
+}
+
+
+
+.gps_ring {
+    border: 3px dashed rgba(19, 183, 251, .85);
+    -webkit-border-radius: 300px;
+    height: 140px;
+    width: 140px;
+    -webkit-animation: pulsate ease-out;
+    animation-duration: 4s;
+
+    -webkit-animation-iteration-count: infinite;
+    /*opacity: 0.0*/
+}
+
+.smaller_gps_ring {
+    border: 3px dashed rgba(19, 183, 251, .85);
+    -webkit-border-radius: 300px;
+    height: 50px;
+    width: 50px;
+    -webkit-animation: pulsate ease-out;
+    animation-duration: 4s;
+
+    -webkit-animation-iteration-count: infinite;
+    /*opacity: 0.0*/
+}
+
+@-webkit-keyframes pulsate {
+    0% {
+        -webkit-transform: scale(0.1, 0.1);
+        opacity: 0.0;
+    }
+
+    50% {
+        opacity: 1.0;
+    }
+
+    100% {
+        -webkit-transform: scale(1.2, 1.2);
+        opacity: 0.0;
+    }
+}
+
+/* do not remove; if removed the 2 heatmaps will not be displayed at the same time */
+.leaflet-zoom-hide {
+    position: absolute !important;
+    
+}
+
+/* for the search bar icon */
+.leaflet-left {
+    left: 300;
+}
+
+.leaflet-overlay-pane{
+    z-index: 401;
+}
+
+.leaflet-marker-pane {
+    z-index: 502;
 }

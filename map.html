@@ -1,33 +1,37 @@
+<script src="./leaflet/leaflet.js"></script>
+
+<script src="./heatmap/heatmap.min.js"></script>
+<script src="./heatmap/leaflet-heatmap.js"></script>
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
     integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
     crossorigin="" />
 
 
-<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-    crossorigin=""></script>
+
+<script src="https://unpkg.com/sql.js@0.3.2/js/sql.js"></script>
 
 
-<link rel="stylesheet" href="./marker-cluster/dist/MarkerCluster.css" />
-<link rel="stylesheet" href="./marker-cluster/dist/MarkerCluster.Default.css" />
 <link rel="stylesheet" href="./mapstyles/mapstyle.css" />
 <link rel="stylesheet" href="./leaflet-search/leaflet-search.css">
 
 <script src="./marker-cluster/dist/leaflet.markercluster-src.js"></script>
+
 <script src="./leaflet-search/leaflet-search.js"></script>
 
-<script src="./data/incidentdata.js"></script>
-<script src="./data/municipaldata.js"></script>
-<script src="./data/regionaldata.js"></script>
-<script src="./data/provincialdata.js"></script>
-<script src="./data/date.js"></script>
-<script src="./data/coverage.js"></script>
+<script type="text/javascript" src="https://unpkg.com/leaflet.vectorgrid@1.2.0"></script>
 
-<style>
-    .leaflet-left {
-        left: 300;
-    }
-</style>
+
+
+<script type="text/javascript" src="./data/incidentdata.js"></script>
+<script type="text/javascript" src="./data/municipaldata.js"></script>
+<script type="text/javascript" src="./data/regionaldata.js"></script>
+<script type="text/javascript" src="./data/provincialdata.js"></script>
+<script type="text/javascript" src="./data/date.js"></script>
+<script type="text/javascript" src="./data/coverage.js"></script>
+<script type="text/javascript" src="./data/brgy.js"></script>
+<script type="text/javascript" src="./functions/functions.js"></script>
+
 <div id="mapid">
 
 
@@ -60,8 +64,7 @@
                 <img class="img-valign" src="./icons/tutlayers.png" style="width: 100px;">
             </div>
             <div style="float: left;width: 490px;"><span style="font-weight: bold;">Click</span> on the buttons on the
-                control panel to switch to different map
-                of overlays</div>
+                control panel to switch to different map overlays</div>
 
 
 
@@ -71,21 +74,18 @@
             <div style="float: left;width: 100px;">
                 <img class="img-valign" src="./icons/tutmarkers.png" style="width: 100px;">
             </div>
-            <div style="float: left;width: 490px;"><span style="font-weight: bold;">Check</span> the checkboxes to
-                display
-                the reported incidents related to
-                COVID-19</div>
+            <div style="float: left;width: 490px;"><span style="font-weight: bold;">Check</span> the boxes to toggle the
+                displayed incidents related to COVID-19</div>
 
         </div>
 
 
         <div class="tutItem">
             <div style="float: left;width: 100px;">
-                <img class="img-valign" src="./icons/tutmarker.png" style="width: 100px;">
+                <img class="img-valign" src="./icons/search.png" style="width: 100px;">
             </div>
-            <div style="float: left;width: 490px;"><span style="font-weight: bold;">Click</span> the circle icon on the
-                map to see
-                all reports within that area</div>
+            <div style="float: left;width: 490px;"><span style="font-weight: bold;">Type</span> in the box to search
+                individual incidents</div>
 
         </div>
 
@@ -99,13 +99,327 @@
 
         </div>
 
-        <div style="position: absolute;bottom: 1%;text-align: center;width: 93%;">
-            Click to close
+        <div style="text-align: center;">
+            <img class="img-valign" src="./icons/info.svg" style="height: 34px;padding-right: 20px;"><span>Click this
+                icon located at the menu to see this tutorial again</span>
+        </div>
+
+
+        <div style="position: absolute;bottom: 1%;text-align: center;width: 93%;font-size: .8em;">
+            Click anywhere to close
         </div>
 
 
     </div>
 
+
+
+    <div id="tutorialModal" onclick="modalClose()" class="hiddenmodal" onmouseover="disableMapInteraction()">
+
+        <h1 style="text-align: center;">Critical Events Monitoring System (CEMS) Interactive Map</h1>
+        <p style="text-align: center;"><em>A guide in using the CEMS Interactive Map for your data-driven and
+                conflict-sensitive programming and
+                planning</em></p>
+
+        <div id="tutorialContent">
+            <p>
+            <h2>Introduction</h2>
+            </p>
+            <p>International Alert Philippines has developed data-driven planning tools able to interface with other
+                instruments and processes crucial in developing plans, programs, strategies, and approaches that are
+                suited to local context and sensitive to conflict dynamics.</p>
+            <p>One such tool is the Critical Events Monitoring System (CEMS), an SMS-based and high radio
+                frequency-based reporting system that captures conflict incidents and tensions in communities that may
+                lead to the eruption of violence.</p>
+            <p>The current public health emergency brought about by the spread of the novel coronavirus or COVID-19 has
+                been quick and crippling and has fueled public distrust and frustration. It requires quick and early
+                public service, humanitarian, and peacebuilding responses that are informed by local context, needs, and
+                history of violent conflict.&nbsp;</p>
+            <p>This interactive map shows events related to the COVID-19 pandemic to help decision-makers effectively
+                respond to tensions and pressures related to the health crisis. These events were tracked by Alert's
+                Early Response Network (ERN), a group of men, women, and the youth in various localities in the
+                Bangsamoro, Eastern and Southern Mindanao, and the National Capital Region who share real-time
+                information and work with local governments, key agencies, the security sector, and religious and
+                traditional leaders in coordinating quick and context-specific responses to events as they happen.</p>
+            <p>The CEMS Interactive Map was primarily created for local government units (LGU), disaster risk reduction
+                office, planning and development office, and other units involved in emergency response. It could also
+                be of interest to government technical staff, independent researchers, and academicians who study
+                conflict dynamics during this pandemic.</p>
+            <p>This user guide helps you understand the maps and how you can use them for your needs. It provides an
+                outline of the features of the map and pointers on how to ensure your plans, directives, and responses
+                will not exacerbate existing tensions and result to violent conflict. The maps may also help you ask
+                appropriate questions and identify data that still need to be obtained in order to employ a level of
+                evaluation suitable for each stage of the planning and response process.</p>
+            <p><br /><br /></p>
+            <p>
+            <h2>Map features </h2>
+            </p>
+            <ul>
+                <li><strong><strong>CEMS events </strong></strong>related to COVID-19. A box containing basic
+                    information and description of the COVID-19 related event pops out when you hover over the dots in
+                    the map. CEMS events are updated weekly. Note that pins show the indicative and not the exact
+                    location of the events within the municipality.CEMS events are categorized into:</li>
+            </ul>
+            <ul>
+                <ul>
+                    <ul>
+                        <li><strong>Tensions. </strong>Issues of insecurity and dissatisfaction created by environment
+                            of fear, misinformation, and inaccessibility of basic needs and assistance during the
+                            observance of quarantine measures.<br /><br /></li>
+                        <li><strong><strong>Violence. </strong>Instances where force or the threat of force was used
+                                over the access or use of resources or the implementation of quarantine
+                                protocols.</strong></li>
+                    </ul>
+                </ul>
+            </ul>
+            <ul>
+                <li><strong>CEMS Coverage. </strong>These show where the CEMS reporters are located. While reporters are
+                    encouraged to report incidents beyond their locations, the location of the reporters usually
+                    signifies a higher number of incidents in the map. The absence of incidents in some locations do not
+                    necessarily mean that there are no events of responses, tensions, or violence in that
+                    area.<br /><br /></li>
+                <li><strong>Location Boundaries.</strong> These are represented in the maps by black broken lines
+                    referring to provincial, municipal, or barangay boundaries. Boundaries are based on the Philippine
+                    Statistical Authority (PSA) 2016 data generated by the Philippine Geoportal System (PGS) Data
+                    Component Team for the Geoportal Philippines.</li>
+            </ul>
+            <ul>
+                <li><strong>DOH COVID-19 Cases. </strong>You may overlay the latest COVID-19 cases as reported by the
+                    Department of Health. Cases of COVID-19 shown on the CEMS map are updated weekly.</li>
+            </ul>
+            <ul>
+                <li><strong>Basemaps</strong>. You can choose and change the basemaps according to your purpose.&nbsp;
+                </li>
+                <ul>
+                    <li>Satellite map &ndash; shows the actual satellite image of the Earth&nbsp;</li>
+                    <li>Street map &ndash; shows a digitized map with labeled road networks</li>
+                    <li>Terrain &ndash; shows topography including the elevation of natural geographic features</li>
+                </ul>
+            </ul>
+            <ul>
+                <li><strong>Search. </strong>You may search a specific location to see the CEMS events in the particular
+                    area.</li>
+            </ul>
+            <ul>
+                <li><strong>Boundary Opacity.</strong>You may adjust the opacity of the boundaries and COVID-19 cases
+                    according to your preference to see overlay map features clearly.&nbsp;</li>
+            </ul>
+            <ul>
+                <li><strong>Heatmap Opacity. </strong>Adjust the opacity of the heatmap according to your preference to
+                    see overlay map features clearly.</li>
+            </ul>
+            <ul>
+                <li><strong>Share. </strong>Share the CEMS Interactive Map to your Facebook, Twitter, and LinkedIn
+                    social media accounts through quick share buttons.&nbsp;</li>
+            </ul>
+            <p><br /><br /></p>
+            <p>
+            <h2>How to use the CEMS interactive map</h2>
+            </p>
+            <p>Reports of events related to the COVID-19 pandemic gathered from March 2020 are visually presented in
+                this interactive thematic map to help decision-makers respond to new tensions and pressures that may
+                lead to violent conflict. You can use this map for targeting purposes such as for the delivery of basic
+                services to the most vulnerable areas and populations, identification of transportation routes and
+                potential quarantine areas, environmental and geohazard mapping, and mapping of conflict flashpoints and
+                hot spots, among others -- all crucial for logistical coordination and risk management. The map is a
+                useful tool for various other purposes and objectives and can be made fit-for-purpose.</p>
+            <p>&nbsp;If you need the list of the CEMS events according to a specific area, or if you wish to download
+                and generate the maps up to the barangay level, please contact us at &lt;email&gt;. <br /><br /></p>
+            <p>
+            <h2>Maps as a planning and peacebuilding tool</h2>
+            </p>
+            <p>This CEMS interactive map does not only present geographical data but can also be used as a planning and
+                a peacebuilding tool. The following section provides a set of questions that will further help your
+                process. Foremost here is the set of conflict sensitivity questions to guard against the unintended
+                impacts of your intervention on the conflict and peace contexts within which these will be implemented.
+                These guide questions and the interactive maps go hand in hand in informing the way interventions are
+                designed, implemented, and evaluated.</p>
+            <p>The CEMS map is crucial to help adapt your implementation plan where issues directly relating to your
+                action are identified. Emergency situations such as the coronavirus pandemic require quick deployment of
+                interventions that are challenged by a multitude of constraints within very narrow timelines. A tailored
+                approach to conflict sensitivity is therefore beneficial, and its integration into the planning,
+                implementation, and evaluation cycle need to be realistic, practical, and easily understood by members
+                of your team and your beneficiaries. Opportunities to deepen the analysis at the onset of the emergency
+                may not be present, but this map gives you the ability to already do this early on in your design
+                process.&nbsp;</p>
+            <p>It is important to update your analysis at critical intervals, as situations during emergencies
+                constantly change and as your response transitions into new phases, such as from recovery to relief and
+                to rehabilitation. Embed real-time evaluation meetings or intra-agency coordination/planning meetings to
+                adjust strategies and integrate a deeper level of conflict risk analysis, mitigation, and management
+                interventions.</p>
+            <p>
+            <h2>Guide for conflict-sensitive planning&nbsp;</h2>
+            </p>
+            <p>Interventions that are insensitive to the local context often lead to unintended negative effects,
+                especially on communities. This has prompted growing awareness among different stakeholders of the need
+                for conflict-sensitivity and ensuring that actions and interventions do not lead to contestation and
+                violence.</p>
+            <p>The following considerations can serve as a guide that you can refer to when deciding on actions or
+                activities to undertake. The checklist on key political, social, economic and environmental factors is a
+                tool that can enable local governments to make informed decisions and enhanced local development plans.
+                It is important to note that some questions may require the conduct of activities such as consultations
+                and dialogues over a period of time.&nbsp;</p>
+            <p>The following questions have been designed to facilitate discussions and generate valuable insights to
+                help ensure that the beneficial effects of planned actions and programmes are maximized, while
+                minimizing conflict risks and other unintended negative outcomes.&nbsp;</p>
+            <h3>Political</h3>
+            <ul>
+                <li>Does the intervention exacerbate existing political feuding, rido or clan wars?</li>
+                <li>Will it create mistrust among groups?</li>
+                <li>Does the project consider village-level political dynamics in planning?</li>
+                <li>Will the activity require heightened presence of armed forces? Does the local government have
+                    standards and protocols for its security forces? Does it provide mechanism for community or
+                    individuals to seek remedy and redress in cases of human rights violations of security personnel?
+                </li>
+                <li>Is the intervention located in contested land resource areas, mining sites, or ancestral
+                    domains?&nbsp;</li>
+                <li>Does the spatial framework consider overlapping land claims and its impact to possible tensions and
+                    conflicts?&nbsp;</li>
+                <li>Is there a consideration for the alternative dispute resolution mechanisms in conflict management of
+                    overlapping claims in land and informal forms of ownership?</li>
+                <li>Will the intervention lead to internal displacement? Is there a plan for relocating displace
+                    people?&nbsp;</li>
+            </ul>
+            <h3>Social</h3>
+            <ul>
+                <li>Did you involve key stakeholders in the development of plans and policies?&nbsp;</li>
+                <li>Will the action provide benefits to excluded groups?</li>
+                <li>Does the action include plans to prevent conflict in communities?</li>
+                <li>Does the action ensure that local cultures and traditions are recognized and upheld?</li>
+                <li>Does your intervention promote and ensure the participation of women and young people?</li>
+                <li>Does it ensure the protection of the rights of children?</li>
+                <li>Will the action strengthen the capacities of local authorities such as your village chiefs and
+                    members of local special bodies to address social needs?</li>
+                <li>Does the local government have or will it create a mechanism for community engagement and dialogue
+                    with clear feedback and communication loop in place?</li>
+                <li>Are there public information programs to raise awareness and encourage local communities to be
+                    involved in the process?&nbsp;</li>
+                <li>Is the action informed by socio-economic baseline data?&nbsp;</li>
+                <li>Is the action accompanied by evaluation of its social impact? Are these reports and assessments made
+                    accessible to the public?</li>
+                <li>Will there be a public reporting of the progress of the intervention and/or the allocation and use
+                    of resources?&nbsp;</li>
+                <li>Is the action accompanied by evaluation of its social impact? Are these reports and assessments made
+                    accessible to the public?</li>
+                <li>Will there be a public reporting of the progress of the intervention and use of funds?&nbsp;</li>
+            </ul>
+            <h3>Economic&nbsp;</h3>
+            <ul>
+                <li>Will the action (business or development initiative) create jobs for local people?</li>
+                <li>Are hiring requirements and guidelines clearly communicated by private partners or local
+                    government?&nbsp;</li>
+                <li>Does the hiring process discriminate and exclude specific groups of ethnicity thereby fueling or
+                    hardening ethnic/community cleavages or divides?</li>
+                <li>Will the action create new skills among local people, especially among young men and women?</li>
+                <li>Will the action lead to local business development (e.g., through joint-ventures, sub-contracting,
+                    etc.) and/or livelihood opportunities?</li>
+                <li>Will the action contribute to local revenues?</li>
+                <li>Will the new businesses/livelihoods be culturally appropriate?</li>
+                <li>Will the action lead to new jobs or other economic opportunities for women and young people?</li>
+                <li>Will the action continuously secure people&rsquo;s access to land, water, and other resources
+                    (coastal/marine resources)?&nbsp;</li>
+                <li>Will the action expel people from community? Will the proposed relocation site create economic
+                    dislocation? Will the new settlement offer similar livelihood opportunities for people?</li>
+                <li>Is the action accompanied by an evaluation of its economic impact? Are these reports and assessments
+                    made accessible to the public by the appropriate regulatory agency/ies of the government?</li>
+            </ul>
+            <h3>Environment/Quality of Life&nbsp;</h3>
+            <ul>
+                <li>Did you refer to the geohazard thematic maps in planning mitigation and management strategies?</li>
+                <li>Will the action guard against the pollution and destruction of the local environment?</li>
+                <li>Does the action include plans and financial allocations for the restoration of the affected
+                    environment in the future?</li>
+                <li>Does the action include community driven sustainable forestry and agriculture projects?</li>
+                <li>Is your crisis management plan communicated clearly to government staff and affected communities?
+                </li>
+                <li>Is the action accompanied by an evaluation of its environmental and health impact? Are these reports
+                    and assessments made accessible to the public by the appropriate regulatory agency/ies of the
+                    government?</li>
+            </ul>
+            <p>
+            <h2>Key questions for conflict analysis</h2>
+            </p>
+            <h3>Conflict profile</h3>
+            <ul>
+                <li>What is the political, economic, and socio-cultural context?<br />Eg: physical geography, population
+                    make-up, recent history, political and economic structure, social composition, environment,
+                    geostrategic position.</li>
+            </ul>
+            <ul>
+                <li>What are the emergent political, economic, ecological and social issues?<br />Eg: elections, reform
+                    processes, decentralization, new infrastructure, disruption of social networks, mistrust, returnees
+                    or refugees and internally displaced persons (IDPs), military and civilian deaths, presence of armed
+                    forces, shadow economy activities and actors.</li>
+            </ul>
+            <ul>
+                <li>What specific conflict prone/affected areas can be situated within this context?<br />Eg: areas of
+                    influence of specific actors, frontlines around the location of natural resources, important
+                    infrastructure and lines of communication, pockets of socially marginalized or excluded populations.
+                </li>
+            </ul>
+            <ul>
+                <li>Is there a history of conflict?<br />Eg: critical events, mediation efforts, external interventions.
+                </li>
+            </ul>
+            <h3>Conflict causes</h3>
+            <ul>
+                <li>What are structural causes of conflict?<br />Eg: illegitimate government, lack of political
+                    participation, lack of equal economic and social opportunities, inequitable access to natural
+                    resources, poor governance, see also conflict alert categories</li>
+            </ul>
+            <ul>
+                <li>What issues can be considered as proximate causes of conflict?<br />Eg: weapons proliferation,
+                    violence in adjoining areas and potential spill-over effects, presence or absence of the security
+                    sector in specific areas</li>
+            </ul>
+            <ul>
+                <li>What triggers can contribute to the outbreak/further escalation of conflict?<br />Eg: elections,
+                    arrest/assassination of key leader or political figure, military coup, rapid change in unemployment,
+                    natural disaster, increased price/ scarcity of basic commodities. Clan feuding, identity violence,
+                    ethnic cleavages</li>
+            </ul>
+            <h3>Conflict actors&nbsp;</h3>
+            <ul>
+                <li>Who are the main actors? Eg: national government, security sector, armed groups, private sector,
+                    multilateral organisations, religious or political networks, civil society, political parties,
+                    neighbouring states, traditional authorities, diaspora groups, refugees/IDPs.&nbsp;</li>
+                <li>What are their main interest, goals, positions, capacities, and relationships? Eg: religious values,
+                    political goals, access to economic resources.&nbsp;</li>
+                <li>What institutional capacities for peace can be identified? Eg: civil society, informal approaches to
+                    conflict resolution, traditional authorities, political institutions (eg: head of state,
+                    parliament), judiciary, regional and multilateral bodies.&nbsp;</li>
+                <li>What actors can be identified as (potential) spoilers? Why? What are their incentives? Eg: groups
+                    benefiting from the war economy, leaders / authority figures who may feel undermined by a project
+                </li>
+            </ul>
+            <h3>Conflict dynamics&nbsp;</h3>
+            <ul>
+                <li>What are the current conflict trends? Eg: escalation or de-escalation, increased defence spending,
+                    decrease in inter-group violence.&nbsp;</li>
+                <li>What are windows of opportunity? Eg: are there positive developments? What factors support them? How
+                    can they be strengthened?&nbsp;</li>
+                <li>What scenarios can be developed from the analysis of the conflict profile, causes and actors? Eg:
+                    best case, middle case and worst-case scenarios</li>
+            </ul>
+            <h3>The following are further questions you may consider in your planning process:</h3>
+            <ol>
+                <li>Access. Which areas are least accessible, which are easily accessible? Factors to consider include
+                    distance, road conditions, weak infrastructure, transport services and conflict hotspots/on-going
+                    armed violence.</li>
+                <li>Connectivity/Clustering. Which areas are economically, socially, and politically interconnected and
+                    which areas are disconnected and why?</li>
+                <li>Improved service delivery. Which areas are least governed, policed and have weak public services?
+                </li>
+                <li>Strategic investments and Economic development. Which areas can be targeted for strategic
+                    urbanization, can be established as provincial growth poles, what is the spread to ensure
+                    development is more balanced and evenly distributed?</li>
+            </ol>
+        </div>
+        <div style="position: absolute;bottom: 2%;text-align: center;width: 93%;font-size: .9em;">
+            Click anywhere to close
+        </div>
+
+    </div>
 
     <div id="mapControlPanel" onmouseover="disableMapInteraction()" onmouseout="enableMapInteraction()">
         <img src="./icons/info.svg" class="infoicon" title="Click to view the tutorial window"
@@ -119,44 +433,37 @@
             <span style="font-size:20px;line-height: normal;font-weight: 300;"> MAP OF COVID-19 RELATED INCIDENTS</span>
         </div>
 
+
+
         <div id="boundaryPanel">
             <div style="width: 100%;margin: auto;width: 100%;" class="tooltip">
                 <span style="font-size: 16px;padding:10px;" class="clickabletitle">Boundaries</span>
-                <span class="tooltiptext">Administrative Boundaries of the Phillipines<br><br>Click on the buttons to
-                    see regional, provincial, or municipal borders.</span>
+                <span class="tooltiptext">These are represented in the maps by black broken lines referring to
+                    provincial, municipal, or barangay boundaries. Boundaries are based on the Philippine Statistical
+                    Authority (PSA) 2016 data generated by the Philippine Geoportal System (PGS) Data Component Team for
+                    the Geoportal Philippines.</span>
 
             </div>
 
             <div id="locreg" class='boundarybutton bbleft' onclick="locButtonSelected(this)">Region</div>
-            <div id="locprov" class='boundarybutton bbright  selected' onclick="locButtonSelected(this)">Province</div>
-            <div id="locmun" class='boundarybutton bbleft' onclick="locButtonSelected(this)">Municipality</div>
-            <div id="locbrg" class='boundarybutton bbright' onclick="locButtonSelected(this)">None</div>
+            <div id="locprov" class='boundarybutton bbright' onclick="locButtonSelected(this)">Province</div>
+            <div id="locmun" class='boundarybutton bbleft selected' onclick="locButtonSelected(this)">Municipality</div>
+            <div id="locbrg" class='boundarybutton bbright disabledButton' onclick="checkIfZoomed();">Barangay</div>
+            <div id="locnone" class='boundarybutton bbleft' style="margin-left: 25%;" onclick="locButtonSelected(this)">
+                None</div>
+
         </div>
 
         <div id="issuesPanel">
 
 
 
-            <div style="width: 100%;" class="tooltip"><span class="clickabletitle "
-                    style="font-size: 16px;padding:5px;margin: 5px;">CEMS
+            <div style="width: 100%;" class="tooltip"><span style="font-size: 16px;padding:5px;margin: 5px;">CEMS
                     Incidents</span><br>
                 <div style="font-size: 14px;padding:5px;margin-left: 5px;" id="cemsdate"></div>
-                <span class="tooltiptext">These incidents were reported by ,asda</span>
 
             </div>
 
-            <div style="margin:10px">
-                <div style="float: left;">
-                    <input type="checkbox" id="govcbox" checked onclick="markerCheckBox()">
-                    <img src='./icons/green.png' style="width: 20px;">
-                </div>
-                <div style="float: left;width:70%;margin-left:5px;" class="clickabletitle tooltip"> Government/Private
-                    Sector
-                    Response
-                    <span class="tooltiptext tooltiptextincident">Tooltip text</span>
-                </div>
-            </div>
-            <p class="clear">&nbsp;</p>
 
             <div style="margin:10px">
                 <div style="float: left;">
@@ -164,7 +471,9 @@
                     <img class="img-valign" src='./icons/yellow.png' style="width: 20px;">
                 </div>
                 <div style="float: left;width:70%;margin-left:5px;" class="clickabletitle tooltip">Tension
-                    <span class="tooltiptext tooltiptextincident">Tooltip text</span>
+                    <span class="tooltiptext tooltiptextincident">Issues of insecurity and dissatisfaction created by
+                        environment of fear, misinformation, and inaccessibility of basic needs and assistance during
+                        the observance of quarantine measures.</span>
                 </div>
             </div>
             <p class="clear">&nbsp;</p>
@@ -177,23 +486,33 @@
 
                 </div>
                 <div style="float: left;width:70%;margin-left:5px;" class="clickabletitle tooltip">Violence
-                    <span class="tooltiptext tooltiptextincident">Tooltip text</span>
+                    <span class="tooltiptext tooltiptextincident">Instances where force or the threat of force was used
+                        over the access or use of resources or the implementation of quarantine protocols. </span>
                 </div>
             </div>
             <p class="clear">&nbsp;</p>
+
+
             <div style="margin:10px">
                 <div style="float: left;">
                     <input class="img-valign" type="checkbox" id="respondentcbox" onclick="showCoverage()">
-                    <img class="img-valign" src='./icons/coverage.png' style="width: 20px;">
+                    <img class="img-valign" src='./icons/ERN geotag.png' style="width: 14px;margin-left: 3px;">
 
 
 
                 </div>
                 <div style="float: left;width:70%;margin-left:5px;" class="clickabletitle tooltip">CEMS Coverage
-                    <span class="tooltiptext tooltiptextincident">Tooltip text</span>
+                    <span class="tooltiptext tooltiptextincident">These show where the CEMS reporters are located. While
+                        reporters are encouraged to report incidents beyond their locations, the location of the
+                        reporters usually signifies a higher number of incidents in the map. The absence of incidents in
+                        some locations do not necessarily mean that there are no events of responses, tensions, or
+                        violence in that area.</span>
                 </div>
             </div>
             <p class="clear">&nbsp;</p>
+
+
+            <!-- 
             <div style="margin:10px">
                 <div style="float: left;">
                     <img class="img-valign" src='./icons/cluster.png' style="width: 30px;">
@@ -206,7 +525,7 @@
                     <span class="tooltiptext tooltiptextincident">These numbered markers show how many individual
                         reports there are around the area.</span>
                 </div>
-            </div>
+            </div> -->
 
         </div>
 
@@ -218,7 +537,8 @@
                 <br>
                 <div style="font-size: 14px;padding:5px;margin-left: 5px;" id="dohdate"></div>
 
-                <span class="tooltiptext">Tooltip text3 <br>asdasd</span>
+                <span class="tooltiptext">You may overlay the latest COVID-19 cases as reported by the Department of
+                    Health. Cases of COVID-19 shown on the CEMS map are updated weekly.</span>
 
             </div>
             <div id="dontshow" class='boundarybutton bbright selected' onclick="dohButtonSelected(this)">Don't show
@@ -245,36 +565,37 @@
 
 
         </div>
-        <div style="display:flex;align-items:flex-end;position: absolute;bottom: 10;right:10;">
-            <div style="margin: 0px 5px 10px 0px;">
-                <span>share this page on</span>
+
+        <!-- <div id='zoomleveldiv'></div> -->
+
+        <div
+            style="display:flex;justify-content:space-between;position: absolute;bottom: 10; left: 10px;width: 260px;align-items: center;">
+            <img src="./icons/book.png" onclick="tutmodalOpen()" width="25px" style="cursor: pointer;">
+            <div style="cursor: pointer;margin-left:-20px;">
+                <span onclick="tutmodalOpen()">Read the manual</span>
             </div>
-            <div style="margin:5px;">
-                <a target="new"
-                    href="https://www.facebook.com/sharer/sharer.php?u=https://conflictalert.info/cems-covid-19-map/">
-                    <img src="./icons/facebook.svg" width="25px" title="share on facebook">
-                </a>
+            <div style="display:flex;align-items:flex-end;">
+                <div style="margin:5px;">
+                    <a target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://conflictalert.info/cems-covid-19-map/">
+                        <img src="./icons/facebook.svg" width="25px" title="share on facebook">
+                    </a>
+                </div>
+                <div style="margin:5px;">
+                    <a target="new"
+                        href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fconflictalert.info%2Fcems-covid-19-map%2F&text=Check%20this%20out!%20Critical%20Events%20Monitoring%20System%20-%20Map%20of%20COVID-19%20Related%20Incidents"
+                        title="Tweet this page"><img src="./icons/twitter.svg" width="25px"></a>
+                </div>
+
+                <div style="margin:5px;">
+
+                    <a target="new"
+                        href="https://www.linkedin.com/shareArticle?mini=true&url=https://conflictalert.info/cems-covid-19-map/&title=&summary=Critical Events Monitoring System - Map of COVID-19 Related Incidents&source="
+                        title="share on linkedin"><img src="./icons/linkedin.svg" width="25px"></a>
+
+
+                </div>
             </div>
-            <div style="margin:5px;">
-                <a target="new"
-                    href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fconflictalert.info%2Fcems-covid-19-map%2F&text=Check%20this%20out!%20Critical%20Events%20Monitoring%20System%20-%20Map%20of%20COVID-19%20Related%20Incidents"
-                    title="Tweet this page"><img src="./icons/twitter.svg" width="25px"></a>
-            </div>
-
-            <div style="margin:5px;">
-
-                <a target="new"
-                    href="https://www.linkedin.com/shareArticle?mini=true&url=https://conflictalert.info/cems-covid-19-map/&title=&summary=Critical Events Monitoring System - Map of COVID-19 Related Incidents&source="
-                    title="share on linkedin"><img src="./icons/linkedin.svg" width="25px"></a>
-
-
-            </div>
-
-
-
-
-
-
         </div>
 
 
@@ -286,7 +607,7 @@
     </div>
 
 
-    <div id="slidecontainerID" class="slidecontainer" onmouseover="disableMapInteraction()"
+    <!-- <div id="slidecontainerID" class="slidecontainer" onmouseover="disableMapInteraction()"
         onmouseout="enableMapInteraction()">
         <div class="clickabletitle tooltip">
             <img class="img-valign" src="./icons/opacity.png" style="height: 13.64px;"> <span>boundary opacity</span>
@@ -296,10 +617,10 @@
         </div>
         <div>
             <img class="img-valign" src="./icons/minus.png" style="margin-top:-13.64;height: 13.64px;"> <input
-                type="range" min="0" max="100" value="30" class="slider" id="myRange" style="width:129px;"> <img
+                type="range" min="0" max="100" value="30" class="slider" id="1myRange" style="width:129px;"> <img
                 class="img-valign" src="./icons/plus.png" style="margin-top:-13.64;height: 13.64px;">
         </div>
-    </div>
+    </div> -->
 
 
 </div>
@@ -311,44 +632,65 @@
     var mapOptions = {
         zoomControl: false,
         minZoom: 5,
-        maxZoom: 18
+        maxZoom: 15
     }
 
-    var map = L.map('mapid', mapOptions).setView([12, 120], 5);
+    var map = L.map('mapid', mapOptions).setView([12.5995, 122.9842], 6);
 
     disableMapInteraction();
 
 
 
+
     map.setMaxBounds(map.getBounds());
-    map.setView([12, 120], 6);
+    map.setView([12.5995, 122.9842], 6);
     map.createPane('labels');
     map.createPane('markerspane');
     map.createPane('respondents');
-
-
-    map.getPane('respondents').style.zIndex = 300;
+    map.createPane('boundarypane').style.zIndex = 400;
+    map.getPane('respondents').style.zIndex = 401;
     map.getPane('labels').style.zIndex = 500;
-    map.getPane('markerspane').style.zIndex = 501;
+    map.getPane('markerspane').style.zIndex = 502;
     map.getPane('labels').style.pointerEvents = 'none';
+    // document.getElementById('zoomleveldiv').innerHTML = "zoom level: " + map.getZoom();
 
 
-    var currentstlye = style1;
-    L.control.zoom({
-        position: 'topright'
-    }).addTo(map);
+    var currentstyle = {
+        fillColor: 'white',
+        weight: 1,
+        opacity: .75,
+        color: 'black',
+        dashArray: '3',
+        fillOpacity: 0
+    };
+
+    var group1 = L.featureGroup().addTo(map);
+    var group2 = L.featureGroup();
 
 
     // initialize basemaps
 
     var positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
         attribution: '©OpenStreetMap, ©CartoDB'
-    }).addTo(map);
+    }).addTo(group1);
 
-    var positronLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+
+    var positronLabelsdark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png', {
         attribution: '©OpenStreetMap, ©CartoDB',
         pane: 'labels'
-    }).addTo(map);
+    });;
+
+    var positronLabelslight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+        attribution: '©OpenStreetMap, ©CartoDB',
+        pane: 'labels'
+    }).addTo(group1);
+    positronLabelslight.addTo(group2);
+    
+    
+    var CartoDB_DarkMatterNoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+
+    }).addTo(group2);
 
 
     var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -361,7 +703,7 @@
 
     var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}&language=EN', {
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-    });
+    }).addTo(group2);
 
     var googleTerrain = L.tileLayer('http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}&language=EN', {
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
@@ -372,29 +714,133 @@
     });
 
 
+    var tensionMarkerGroup = new L.featureGroup({
+        maxZoom: 10,
+        pane: 'markerpane'
+    });
+    var violenceMarkerGroup = new L.featureGroup({
+        pane: 'markerpane'
+    });
+
     var baseMaps = {
-        "Carto DB (grayscale map)": positron,
-        "Google Satellite (satellite image)": googleSat,
+        "Carto DB White": group1,
+        // "Carto DB Black": group2,
+        "Google Satellite (satellite image)": group2,
         "Google Streets (digitized and labeled)": googleStreets,
-        "Google Terrain (digitized with elevation info)": googleTerrain,
+        "Google Terrain (digitized with elevation info)": googleTerrain
     };
 
-    var overlays = {
-        "Carto DB Labels": positronLabels
-    }
-    L.control.layers(baseMaps, overlays).addTo(map);
 
-    // add initial overlay 
-    geojson = L.geoJson(provincialdata, {
+
+    var vectorGrid = L.vectorGrid.slicer(brgy_daya, {
+        maxZoom: 15,
+        minZoom: 10,
+        rendererFactory: L.svg.tile,
+        vectorTileLayerStyles: {
+            sliced: {
+                fillColor: 'white',
+                weight: 1,
+                color: 'black',
+                dashArray: '3',
+                fillOpacity: 0.75
+            }
+        }
+    });
+
+    var municipalLayer = L.geoJson(municipaldata, {
         style: style1,
-        onEachFeature: onEachFeature
-    }).addTo(map);
+        onEachFeature: onEachFeature,
+        pane: 'boundarypane'
+    })
+
+    var provincialLayer = L.geoJson(provincialdata, {
+        style: style1,
+        onEachFeature: onEachFeature,
+        pane: 'boundarypane'
+    })
+
+    var regionalLayer = L.geoJson(regionaldata, {
+        style: style1,
+        onEachFeature: onEachFeature,
+        pane: 'boundarypane'
+    })
+
+
+    // // add initial overlay 
+    geojson = municipalLayer;
+    geojson.addTo(map);
+
+    var heatmapradius = {
+        5: 0.18,
+        6: 0.15,
+        7: 0.13,
+        8: 0.11,
+        9: 0.09,
+        10: 0.07,
+        11: 0.05,
+        12: 0.03,
+        13: 0.02,
+        14: 0.009,
+        15: 0.006
+    }
+    var cfg = {
+        // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+        // if scaleRadius is false it will be the constant radius used in pixels
+        "useLocalExtrema": false,
+        gradient: {
+            // enter n keys between 0 and 1 here
+            // for gradient color customization
+            '0': '#FFC234',
+            '1': '#FFC234'
+        },
+        "radius": .15,
+        "maxOpacity": .8,
+        // scales the radius based on map zoom
+        "scaleRadius": true,
+        // if set to false the heatmap uses the global maximum for colorization
+        // if activated: uses the data maximum within the current map boundaries
+        //   (there will always be a red spot with useLocalExtremas true)
+        // which field name in your data represents the latitude - default "lat"
+        latField: 'lat',
+        // which field name in your data represents the longitude - default "lng"
+        lngField: 'lng',
+        // which field name in your data represents the data value - default "value"
+        valueField: 'count'
+    };
+
+
+    var cfg2 = {
+        // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+        // if scaleRadius is false it will be the constant radius used in pixels
+        "useLocalExtrema": false,
+        gradient: {
+            // enter n keys between 0 and 1 here
+            // for gradient color customization
+            '0': '#A82C15',
+            '1': '#A82C15'
+        },
+        "radius": .15,
+        "maxOpacity": .8,
+        // scales the radius based on map zoom
+        "scaleRadius": true,
+        // if set to false the heatmap uses the global maximum for colorization
+        // if activated: uses the data maximum within the current map boundaries
+        //   (there will always be a red spot with useLocalExtremas true)
+        // which field name in your data represents the latitude - default "lat"
+        latField: 'lat',
+        // which field name in your data represents the longitude - default "lng"
+        lngField: 'lng',
+        // which field name in your data represents the data value - default "value"
+        valueField: 'count'
+    };
 
 
 
-    // add markers
+    var heatmapLayer = new HeatmapOverlay(cfg);
+    var heatmapLayer2 = new HeatmapOverlay(cfg2);
 
-    var markers = L.markerClusterGroup();
+
+
 
     var IssueIcon = L.Icon.extend({
         options: {
@@ -413,6 +859,58 @@
     var redIcon = new IssueIcon({
         iconUrl: './icons/red.png',
     })
+
+    var coverageIcon = L.icon({
+        iconUrl: './icons/ERN geotag.png',
+        iconSize: [20, 33], // size of the icon
+        pane: 'markersPane'
+
+    });
+
+    // Define an icon called cssIcon
+    var cssIcon = L.divIcon({
+        // Specify a class name we can refer to in CSS.
+        className: 'css-icon',
+        html: '<div class="gps_ring"></div>'
+        // Set marker width and height
+        , iconSize: [140, 140]
+        // ,iconAnchor: [11,11]
+    });
+
+
+    var smallerIcon = L.divIcon({
+        // Specify a class name we can refer to in CSS.
+        className: 'css-icon',
+        html: '<div class="smaller_gps_ring"></div>'
+        // Set marker width and height
+        , iconSize: [50, 50]
+        // ,iconAnchor: [11,11]
+    });
+
+    // add markers
+
+
+
+
+    // var markers = L.markerClusterGroup({
+    //     disableClusteringAtZoom: 13,
+    //     iconCreateFunction: function (cluster) {
+    //         var violenceount = 0;
+    //         var tensionscount = 0;
+    //         var markers222 = cluster.getAllChildMarkers();
+
+    //         markers222.forEach(element => {
+    //             if (element.options.type == "Violence") {
+    //                 violenceount++;
+    //             } else {
+    //                 tensionscount++;
+    //             }
+    //         });
+    //         return L.divIcon({ html: '<div class=\'halfmarker\'>' + tensionscount + '<br><span class=\'violencecount\'>' + violenceount + '</span></div>', className: 'testclass' });
+    //     }
+    // });
+
+
 
 
     var arrayLength = incidentdata.length;
@@ -443,12 +941,11 @@
 
 
 
-    markerCheckBox();
 
 
     var controlSearch = new L.Control.Search({
         position: 'topleft',
-        layer: markers,
+        layer: tensionMarkerGroup,
         initial: false,
         zoom: 18,
         marker: L.circleMarker([0, 0], { radius: 30 })
@@ -473,7 +970,7 @@
             this._div.innerHTML = '<h4>Hover over an area</h4>';
 
         } else {
-            if (currentstlye == style0) {
+            if (currentstyle == style0) {
 
                 this._div.innerHTML =
                     '<h4>Covid Cases (May 25, 2020)</h4>' +
@@ -489,7 +986,6 @@
             }
         }
     };
-    info.addTo(map);
 
 
     var legend = L.control({ position: 'topright' });
@@ -510,366 +1006,136 @@
         return div;
     };
 
+    var legend2 = L.control({ position: 'topright' });
+
+    legend2.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend'),
+            grades = [1, 25, 50, 100, 200, 500, 1000],
+            labels = [];
+
+        // loop through our density intervals and generate a label with a colored square for each interval
+        div.innerHTML = "Incident Count<br>0 &nbsp  &nbsp 2  &nbsp  &nbsp 5  &nbsp 10< <div id='gradient-legend'></div>";
+
+        return div;
+    };
+
+
+    var legend3 = L.control({ position: 'topright' });
+
+    legend3.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend');
+
+        // loop through our density intervals and generate a label with a colored square for each interval
+        div.innerHTML = "<div onmouseover='disableMapInteraction()' onmouseout='enableMapInteraction()'><img class='img-valign' src='./icons/opacity.png' style='height: 13.64px;'> <span>Heatmap Opacity</span><br><img class='img-valign' src='./icons/minus.png' style='margin-top:-13.64;height: 13.64px;'><input type='range' min='0' max='100' value='75' class='slider' id='myRange' style='width:129px;'><img class='img-valign' src='./icons/plus.png' style='margin-top:-13.64;height: 13.64px;'></div>";
+
+        return div;
+    };
+
+
+
+
+    var legend4 = L.control({ position: 'topright' });
+
+    legend4.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'info legend');
+
+        // loop through our density intervals and generate a label with a colored square for each interval
+        div.innerHTML = "<div onmouseover='disableMapInteraction()' onmouseout='enableMapInteraction()'><img class='img-valign' src='./icons/opacity.png' style='height: 13.64px;'> <span>Boundary Opacity</span><br><img class='img-valign' src='./icons/minus.png' style='margin-top:-13.64;height: 13.64px;'><input type='range' min='0' max='100' value='0' class='slider' id='1myRange' style='width:129px;'><img class='img-valign' src='./icons/plus.png' style='margin-top:-13.64;height: 13.64px;'></div>";
+
+        return div;
+    };
+
+
+    L.control.zoom({
+        position: 'topright'
+    }).addTo(map);
+
+    L.control.layers(baseMaps, {}, { position: 'topright' }).addTo(map);
+
+
+
+    map.addControl(legend3);
+
+    map.addControl(legend4);
+
+    map.addControl(legend2);
+
+    markerCheckBox();
+
+    info.addTo(map);
+
 
 
 
     var slider = document.getElementById("myRange");
 
+    slider.oninput = function () {
+        var fillOpacity = this.value / 100
+        document.getElementsByClassName("leaflet-overlay-pane")[0].style.opacity = fillOpacity.toString();
+
+    }
+
+    var slider = document.getElementById("1myRange");
 
     slider.oninput = function () {
-
         geojson.setStyle({
 
-            fillOpacity: (100 - this.value) / 100
+            fillOpacity: this.value / 100
         });
 
     }
 
 
 
+    var controlobject;
 
-    function showCoverage() {
-
-        var flag = document.getElementById("respondentcbox").checked;
-
-        if (flag) {
-            map.getPane('respondents').style.zIndex = 400;
-            resGroup.addTo(map);
-        } else {
-            map.getPane('respondents').style.zIndex = 300;
-            map.removeLayer(resGroup);
-        }
-    }
 
-    function markerCheckBox() {
-        allIssues = [];
-        // Get the checkbox
-        var tencheckBox = document.getElementById("tencbox");
-        var viocheckBox = document.getElementById("viocbox");
-        var govcheckBox = document.getElementById("govcbox");
-        // Get the output text
-
-        // If the checkbox is checked, display the output text
-        if (tencheckBox.checked == true) {
-            allIssues = allIssues.concat(tenIssues);
-        }
-        if (govcheckBox.checked == true) {
-            allIssues = allIssues.concat(govIssues);
-        }
-        if (viocheckBox.checked == true) {
-            allIssues = allIssues.concat(vioIssues);
-        }
-        markers.clearLayers();
-
-        createMarkers();
-
+    map.on('zoomend', adjustMarkers);
 
-        // markers.addTo(map);
-    }
 
 
+    // window.onload = (event) => {
+    //     controlobject = document.getElementsByName('leaflet-base-layers_3603');
+    //     for (let index = 0; index < controlobject.length; index++) {
+    //         const element = controlobject[index];
+    //         element.onclick = function () {
+    //             if (index == 0) {
+    //                 currentstyle = {
+    //                     fillColor: 'white',
+    //                     weight: 1,
+    //                     opacity: .75,
+    //                     color: 'black',
+    //                     dashArray: '3',
+    //                     fillOpacity: 0
+    //                 };
 
 
-    function createMarkers() {
 
-        for (var i = 0; i < allIssues.length; i++) {
-
-            var temp;
-            if (allIssues[i].issue == 'Tensions') {
-                temp = '#ffba00';
-            } else if (allIssues[i].issue == 'Government/Private sector response') {
-                temp = '#477827';;
-            } else if (allIssues[i].issue == 'Violence') {
-                temp = '#9e0000';
-            }
+    //             } else if (index == 1) {
+    //                 currentstyle = {
+    //                     fillColor: 'white',
+    //                     weight: 1,
+    //                     opacity: .75,
+    //                     color: 'white',
+    //                     dashArray: '3',
+    //                     fillOpacity: 0
+    //                 };
 
-            var temptitle = allIssues[i].barangay + " | " + allIssues[i].city + " | " + allIssues[i].municipality + " | " + allIssues[i].province + " | " + allIssues[i].issue;
+    //             }
+    //             geojson.setStyle(currentstyle);
 
-            var markerOptions = {
-                title: temptitle,
-                radius: 8,
-                fillColor: temp,
-                color: "#000000",
-                fillOpacity: 1,
-                weight: 2,
-                pane: 'markerspane',
-                test: '22'
 
-            };
+    //         }
 
 
-            var marker = L.circleMarker(new L.LatLng(allIssues[i].lat, allIssues[i].lng), markerOptions);
-            var town;
-            if (allIssues[i].municipality != "") {
-                town = allIssues[i].municipality
-            } else {
-                town = allIssues[i].city
-            }
-            var popuphtml =
-                "<span class='popuplabel'>Date: </span>" + allIssues[i].date + "&nbsp&nbsp&nbsp&nbsp<span class='popuplabel'>Date Reported:</span> " + allIssues[i].datereported +
-                "<br><span class='popuplabel'>Issue: </span>" + allIssues[i].issue + "<br>" +
-                "<span class='popuplabel'>City/Municipality: </span>" + town + "<br>" +
-                "<span class='popuplabel'>Details: </span>" + allIssues[i].details + "<br>"
-            marker.bindPopup(popuphtml);
-            markers.addLayer(marker);
 
-        }
+    //     }
 
-        map.addLayer(markers);
 
 
-
-        // map.addControl( new L.Control.Search({
-        // 	url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}',
-        //     position:'topleft',
-        // 	jsonpParam: 'json_callback',
-        // 	propertyName: 'display_name',
-        // 	propertyLoc: ['lat','lon'],
-        // 	marker: L.circleMarker([0,0],{radius:30}),
-        // 	autoCollapse: true,
-        // 	autoType: false,
-        // 	minLength: 5
-        // }) );
-
-
-    }
-
-
-
-
-    function getColor(d) {
-        //alert(d);
-        return d > 1000 ? '#67340B' :
-            d > 500 ? '#834311' :
-                d > 200 ? '#964C15' :
-                    d > 100 ? '#A45518' :
-                        d > 50 ? '#B5651D' :
-                            d > 25 ? '#C89C49' :
-                                d > 1 ? '#FFEDA0'
-                                    : '#FFFFFF';
-    }
-
-
-    function style0(feature) {
-        var opacity = (100 - document.getElementById("myRange").value) / 100;
-
-        return {
-            fillColor: getColor(feature.properties.covidcases),
-            weight: 2,
-            opacity: .1,
-            color: 'white',
-            dashArray: '3',
-            fillOpacity: opacity
-        };
-    }
-
-
-    function style1() {
-        var opacity = (100 - document.getElementById("myRange").value) / 100;
-
-        return {
-            fillColor: 'white',
-            weight: 2,
-            opacity: 1,
-            color: 'black',
-            dashArray: '3',
-            fillOpacity: opacity
-        };
-    }
-
-
-
-    function highlightFeature(e) {
-        var layer = e.target;
-        info.update(layer.feature.properties, false);
-    }
-
-    function resetHighlight(e) {
-        // geojson.resetStyle(e.target);
-
-        temp = {
-            covidcases: '- ',
-            area: 'Hover over an Area'
-        }
-        info.update(temp, true);
-
-
-    }
-
-    function zoomToFeature(e) {
-        map.fitBounds(e.target.getBounds());
-    }
-
-    function onEachFeature(feature, layer) {
-        layer.on({
-            mouseover: highlightFeature,
-            mouseout: resetHighlight
-        });
-    }
-
-    // zoomedOut.setOpacity(.5);//pwede icontrol
-
-
-    function switchlayer(layer) {
-        map.removeLayer(geojson);
-
-
-        if (layer == 'locbrg') {
-	        document.getElementById('show').classList.remove('selected');
-	        document.getElementById('dontshow').classList.add('selected');
-            currentstlye = style1
-            map.removeControl(legend);
-
-        }else{
-	        if (layer == 'locreg') {
-	            layer = regionaldata;
-
-	        } else if (layer == 'locmun') {
-	            layer = municipaldata;
-	        } else if (layer == 'locprov') {
-	            layer = provincialdata;
-	        }
-
-	        geojson = L.geoJson(layer, {
-	            style: currentstlye,
-	            onEachFeature: onEachFeature
-
-	        }).addTo(map);
-        }
-
-
-
-    }
-
-
-    function removeSelected() {
-        document.getElementById('dontshow').classList.remove('selected');
-        document.getElementById('show').classList.remove('selected');
-
-    }
-
-    function removeLoCSelected() {
-        document.getElementById('locreg').classList.remove('selected');
-        document.getElementById('locprov').classList.remove('selected');
-        document.getElementById('locmun').classList.remove('selected');
-        document.getElementById('locbrg').classList.remove('selected');
-
-    }
-
-    function setSelected(id) {
-        document.getElementById(id).classList.add('selected');
-    }
-
-
-    function dohButtonSelected(t) {
-        removeSelected();
-        setSelected(t.id);
-        if (t.id == 'dontshow') {
-            currentstlye = style1
-            map.removeControl(legend);
-        }
-        else {
-            currentstlye = style0
-
-            map.addControl(legend);
-
-        }
-        geojson.setStyle(currentstlye);
-    }
-
-
-
-
-
-    function locButtonSelected(t) {
-
-        if (t.id == "dontshow") {
-
-            geojson.setStyle(style1);
-            map.removeControl(legend);
-            map.removeControl(info);
-            removeLoCSelected();
-            setSelected(t.id);
-
-        } else {
-            removeLoCSelected()
-            // map.addControl(info);
-            // map.addControl(legend);
-            switchlayer(t.id);
-            setSelected(t.id);
-        }
-    }
-
-
-    function enableMapInteraction() {
-
-        map.dragging.enable();
-        map.touchZoom.enable();
-        map.doubleClickZoom.enable();
-        map.scrollWheelZoom.enable();
-        map.boxZoom.enable();
-        map.keyboard.enable();
-
-
-    }
-
-    function disableMapInteraction() {
-
-        map.dragging.disable();
-        map.touchZoom.disable();
-        map.doubleClickZoom.disable();
-        map.scrollWheelZoom.disable();
-        map.boxZoom.disable();
-        map.keyboard.disable();
-
-
-    }
-
-    function modalClose() {
-        enableMapInteraction()
-
-        document.getElementById('dimmedOverlay').classList.add('hiddenmodal');
-        document.getElementById('introModal').classList.add('hiddenmodal');
-
-    }
-
-    function modalOpen() {
-
-        disableMapInteraction();
-
-        document.getElementById('dimmedOverlay').classList.remove('hiddenmodal');
-        document.getElementById('introModal').classList.remove('hiddenmodal');
-
-    }
-
-    function updateDates() {
-        document.getElementById('cemsdate').innerHTML = incidentAsOfDate;
-        document.getElementById('dohdate').innerHTML = incidentAsOfDate;
-
-    }
-
-
-    var resGroup = L.layerGroup();
-    plotCoverage();
-    function plotCoverage() {
-
-        var tempcolor = "#14B7FB";
-
-
-        for (let i = 0; i < coverage.length; i++) {
-
-            var circle = L.circle([coverage[i].lat, coverage[i].lng], {
-                opacity: 0,
-                fillColor: tempcolor,
-                fillOpacity: 0.5,
-                radius: 10000,
-                pane: 'respondents'
-            }).addTo(resGroup);
-
-
-        }
-
-
-    }
+    // };
 
 </script>
