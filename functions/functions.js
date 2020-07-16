@@ -144,17 +144,17 @@
 
 
     function style0(feature) {
-        var opacity
-
+        var opacity;
         if (document.getElementById("1myRange") != null) {
+            document.getElementById("1myRange").value = 75;
             opacity = document.getElementById("1myRange").value / 100;
         } else {
-            opacity = ".9";
+            opacity = ".75";
 
         }
         return {
             fillColor: getColor(feature.properties.covidcases),
-            weight: 2,
+            weight: 1,
             opacity: .1,
             color: 'white',
             dashArray: '3',
@@ -164,9 +164,10 @@
 
 
     function style1() {
-
+        
         var opacity
         if (document.getElementById("1myRange") != null) {
+            document.getElementById("1myRange").value = 0;
             opacity = document.getElementById("1myRange").value / 100;
         } else {
             opacity = "0";
@@ -175,7 +176,7 @@
 
         return {
             fillColor: 'white',
-            weight: 2,
+            weight: 1,
             opacity: .75,
             color: 'black',
             dashArray: '3',
@@ -228,7 +229,6 @@
         if (layer == 'locnone') {
             document.getElementById('show').classList.remove('selected');
             document.getElementById('dontshow').classList.add('selected');
-            currentstyle = style1
             map.removeControl(legend);
 
         } else if (layer == 'locreg') {
@@ -325,7 +325,7 @@
     }
 
     function disableMapInteraction() {
-        console.log('disable');
+        
         map.dragging.disable();
         map.touchZoom.disable();
         map.doubleClickZoom.disable();
@@ -338,7 +338,6 @@
 
     function modalClose() {
         enableMapInteraction()
-
         document.getElementById('dimmedOverlay').classList.add('hiddenmodal');
         document.getElementById('introModal').classList.add('hiddenmodal');
         document.getElementById('tutorialModal').classList.add('hiddenmodal');
@@ -355,7 +354,7 @@
 
 
     function tutmodalOpen() {
-        console.log("disable map");
+        
 
         document.getElementById('dimmedOverlay').classList.remove('hiddenmodal');
         document.getElementById('tutorialModal').classList.remove('hiddenmodal');
@@ -442,31 +441,27 @@
         var zoom = map.getZoom();
         if (zoom <= 9 && map.hasLayer(tensionMarkerGroup)) {
             map.removeLayer(tensionMarkerGroup);
-            cfg.radius = 0.15;
-            cfg2.radius = 0.15;
 
 
         }
         if (zoom > 9 && map.hasLayer(tensionMarkerGroup) == false) {
             map.addLayer(tensionMarkerGroup);
-            cfg.radius = 0.15 - (zoom / 100);
-            cfg2.radius = 0.15 - (zoom / 100);
-
+            // cfg.radius = 0.05;
+            // cfg2.radius = 0.05;
+            
         }
         if (zoom <= 9 && map.hasLayer(violenceMarkerGroup)) {
             map.removeLayer(violenceMarkerGroup);
-            cfg.radius = 0.15;
-            cfg2.radius = 0.15;
 
 
         }
         if (zoom > 9 && map.hasLayer(violenceMarkerGroup) == false) {
             map.addLayer(violenceMarkerGroup);
-            cfg.radius = 0.15 - (zoom / 100);
-            cfg2.radius = 0.15 - (zoom / 100);
 
         }
-
+        cfg.radius = heatmapradius[zoom];
+        cfg2.radius = heatmapradius[zoom];
+        
 
 
     }
@@ -508,11 +503,16 @@
     function adjustAdminborders() {
         var zoom = map.getZoom();
         var weight = 1;
-        if (zoom >= 9) {
-            weight = 2;
+        var dashArray = "3";
+
+        if (zoom > 9) {
+            weight = 1;
+            dashArray = "5 10";
+            console.log('adjust dash')
         }
         geojson.setStyle({
-            weight: weight
+            weight: weight,
+            dashArray: dashArray
         });
 
 
@@ -520,7 +520,10 @@
 
     function switchFromBrgyOnZoom() {
         var zoom = map.getZoom();
-        if (zoom > 9) {
+        console.log('zoom :>> ', zoom);
+
+        if ((zoom <= 9) && map.hasLayer(vectorGrid) ) {
+            
             locButtonSelected(document.getElementById('locmun'));
         }
 
@@ -528,7 +531,7 @@
 
 
     function checkIfZoomed() {
-        if (map.getZoom() > 10) {
+        if (map.getZoom() >= 10) {
             locButtonSelected(document.getElementById('locbrg'));
 
         }
@@ -538,7 +541,7 @@
     function disableBrgy() {
         var zoom = map.getZoom();
 
-        if (zoom <= 10) {
+        if (zoom <= 9) {
             document.getElementById('locbrg').classList.add("disabledButton");
         } else {
 
@@ -552,10 +555,10 @@
 
         hideMarkersOnZoom();
         plotCoverage();
-        adjustAdminborders();
         switchFromBrgyOnZoom();
         disableBrgy();
         resizeCircleradius();
+        adjustAdminborders();
 
 
 

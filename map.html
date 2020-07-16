@@ -448,7 +448,7 @@
             <div id="locreg" class='boundarybutton bbleft' onclick="locButtonSelected(this)">Region</div>
             <div id="locprov" class='boundarybutton bbright' onclick="locButtonSelected(this)">Province</div>
             <div id="locmun" class='boundarybutton bbleft selected' onclick="locButtonSelected(this)">Municipality</div>
-            <div id="locbrg" class='boundarybutton bbright' onclick="checkIfZoomed();">Barangay</div>
+            <div id="locbrg" class='boundarybutton bbright disabledButton' onclick="checkIfZoomed();">Barangay</div>
             <div id="locnone" class='boundarybutton bbleft' style="margin-left: 25%;" onclick="locButtonSelected(this)">
                 None</div>
 
@@ -657,34 +657,40 @@
 
     var currentstyle = {
         fillColor: 'white',
-        weight: 2,
+        weight: 1,
         opacity: .75,
         color: 'black',
         dashArray: '3',
         fillOpacity: 0
     };
 
-
-
+    var group1 = L.featureGroup().addTo(map);
+    var group2 = L.featureGroup();
 
 
     // initialize basemaps
 
     var positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
         attribution: '©OpenStreetMap, ©CartoDB'
-    }).addTo(map);
+    }).addTo(group1);
 
 
-    var positronLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+    var positronLabelsdark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png', {
         attribution: '©OpenStreetMap, ©CartoDB',
         pane: 'labels'
-    }).addTo(map);
+    });;
 
-
+    var positronLabelslight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+        attribution: '©OpenStreetMap, ©CartoDB',
+        pane: 'labels'
+    }).addTo(group1);
+    positronLabelslight.addTo(group2);
+    
+    
     var CartoDB_DarkMatterNoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
 
-    });
+    }).addTo(group2);
 
 
     var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -697,7 +703,7 @@
 
     var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}&language=EN', {
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-    });
+    }).addTo(group2);
 
     var googleTerrain = L.tileLayer('http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}&language=EN', {
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
@@ -717,16 +723,13 @@
     });
 
     var baseMaps = {
-        "Carto DB White": positron,
-        "Carto DB Black": CartoDB_DarkMatterNoLabels,
-        "Google Satellite (satellite image)": googleSat,
+        "Carto DB White": group1,
+        // "Carto DB Black": group2,
+        "Google Satellite (satellite image)": group2,
         "Google Streets (digitized and labeled)": googleStreets,
         "Google Terrain (digitized with elevation info)": googleTerrain
     };
 
-    var overlays = {
-        "Carto DB Labels": positronLabels
-    }
 
 
     var vectorGrid = L.vectorGrid.slicer(brgy_daya, {
@@ -767,6 +770,19 @@
     geojson = municipalLayer;
     geojson.addTo(map);
 
+    var heatmapradius = {
+        5: 0.18,
+        6: 0.15,
+        7: 0.13,
+        8: 0.11,
+        9: 0.09,
+        10: 0.07,
+        11: 0.05,
+        12: 0.03,
+        13: 0.02,
+        14: 0.009,
+        15: 0.006
+    }
     var cfg = {
         // radius should be small ONLY if scaleRadius is true (or small radius is intended)
         // if scaleRadius is false it will be the constant radius used in pixels
@@ -777,7 +793,7 @@
             '0': '#FFC234',
             '1': '#FFC234'
         },
-        "radius": .05,
+        "radius": .15,
         "maxOpacity": .8,
         // scales the radius based on map zoom
         "scaleRadius": true,
@@ -803,7 +819,7 @@
             '0': '#A82C15',
             '1': '#A82C15'
         },
-        "radius": .05,
+        "radius": .15,
         "maxOpacity": .8,
         // scales the radius based on map zoom
         "scaleRadius": true,
@@ -1037,7 +1053,7 @@
         position: 'topright'
     }).addTo(map);
 
-    L.control.layers(baseMaps, overlays, { position: 'topright' }).addTo(map);
+    L.control.layers(baseMaps, {}, { position: 'topright' }).addTo(map);
 
 
 
@@ -1074,13 +1090,52 @@
 
 
 
-
+    var controlobject;
 
 
     map.on('zoomend', adjustMarkers);
 
 
 
+    // window.onload = (event) => {
+    //     controlobject = document.getElementsByName('leaflet-base-layers_3603');
+    //     for (let index = 0; index < controlobject.length; index++) {
+    //         const element = controlobject[index];
+    //         element.onclick = function () {
+    //             if (index == 0) {
+    //                 currentstyle = {
+    //                     fillColor: 'white',
+    //                     weight: 1,
+    //                     opacity: .75,
+    //                     color: 'black',
+    //                     dashArray: '3',
+    //                     fillOpacity: 0
+    //                 };
 
+
+
+    //             } else if (index == 1) {
+    //                 currentstyle = {
+    //                     fillColor: 'white',
+    //                     weight: 1,
+    //                     opacity: .75,
+    //                     color: 'white',
+    //                     dashArray: '3',
+    //                     fillOpacity: 0
+    //                 };
+
+    //             }
+    //             geojson.setStyle(currentstyle);
+
+
+    //         }
+
+
+
+    //     }
+
+
+
+    // };
 
 </script>
