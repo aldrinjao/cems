@@ -450,3 +450,5 @@ height: 600px;
 .leaflet-marker-pane {
     z-index: 502;
 }
+
+ .leaflet-fade-anim .leaflet-tile,.leaflet-zoom-anim .leaflet-zoom-animated { will-change:auto !important; }

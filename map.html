@@ -7,6 +7,7 @@
     integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
     crossorigin="" />
 
+    <script src="https://unpkg.com/topojson@3.0.2/dist/topojson.min.js"></script>
 
 
 <script src="https://unpkg.com/sql.js@0.3.2/js/sql.js"></script>
@@ -627,9 +628,35 @@
 
 
 <script>
+
+L.TopoJSON = L.GeoJSON.extend({
+        addData: function (data) {
+          var geojson, key;
+          if (data.type === "Topology") {
+            for (key in data.objects) {
+              if (data.objects.hasOwnProperty(key)) {
+                geojson = topojson.feature(data, data.objects[key]);
+                L.GeoJSON.prototype.addData.call(this, geojson);
+              }
+            }
+            return this;
+          }
+          L.GeoJSON.prototype.addData.call(this, data);
+          return this;
+        }
+      });
+      L.topoJson = function (data, options) {
+        return new L.TopoJSON(data, options);
+      };
+
+
+
+
     //update the text display on as of for both sections
     updateDates();
     var mapOptions = {
+        preferCanvas: true,
+        renderer: L.canvas(),
         zoomControl: false,
         minZoom: 5,
         maxZoom: 15
@@ -685,8 +712,8 @@
         pane: 'labels'
     }).addTo(group1);
     positronLabelslight.addTo(group2);
-    
-    
+
+
     var CartoDB_DarkMatterNoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
 
@@ -735,9 +762,13 @@
     var vectorGrid = L.vectorGrid.slicer(brgy_daya, {
         maxZoom: 15,
         minZoom: 10,
-        rendererFactory: L.svg.tile,
+        rendererFactory: L.canvas.tile,
+    getFeatureId: function(f){
+            return f.properties.id;
+        },
+    //     vectorTileLayerName: 'test',
         vectorTileLayerStyles: {
-            sliced: {
+            brgy: {
                 fillColor: 'white',
                 weight: 1,
                 color: 'black',
@@ -747,19 +778,30 @@
         }
     });
 
-    var municipalLayer = L.geoJson(municipaldata, {
+
+    console.log('vectorGrid :>> ', vectorGrid);
+
+    // var vectorGrid = L.topoJson(brgy_daya, {
+    //     style: style1,
+    //     onEachFeature: onEachFeature,
+    //     pane: 'boundarypane'
+    // })
+
+
+
+    var municipalLayer = L.topoJson(municipaldata, {
         style: style1,
         onEachFeature: onEachFeature,
         pane: 'boundarypane'
     })
 
-    var provincialLayer = L.geoJson(provincialdata, {
+    var provincialLayer = L.topoJson(provincialdata, {
         style: style1,
         onEachFeature: onEachFeature,
         pane: 'boundarypane'
     })
 
-    var regionalLayer = L.geoJson(regionaldata, {
+    var regionalLayer = L.topoJson(regionaldata, {
         style: style1,
         onEachFeature: onEachFeature,
         pane: 'boundarypane'
