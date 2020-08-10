@@ -7,31 +7,26 @@
     integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
     crossorigin="" />
 
-    <script src="https://unpkg.com/topojson@3.0.2/dist/topojson.min.js"></script>
-
+<script src="https://unpkg.com/topojson@3.0.2/dist/topojson.min.js"></script>
 
 <script src="https://unpkg.com/sql.js@0.3.2/js/sql.js"></script>
 
-
 <link rel="stylesheet" href="./mapstyles/mapstyle.css" />
 <link rel="stylesheet" href="./leaflet-search/leaflet-search.css">
-
-<script src="./marker-cluster/dist/leaflet.markercluster-src.js"></script>
-
 <script src="./leaflet-search/leaflet-search.js"></script>
 
 <script type="text/javascript" src="https://unpkg.com/leaflet.vectorgrid@1.2.0"></script>
 
 
+<script type="text/javascript" src="./data/date.js"></script>
+<script type="text/javascript" src="./functions/functions.js"></script>
 
 <script type="text/javascript" src="./data/incidentdata.js"></script>
 <script type="text/javascript" src="./data/municipaldata.js"></script>
 <script type="text/javascript" src="./data/regionaldata.js"></script>
 <script type="text/javascript" src="./data/provincialdata.js"></script>
-<script type="text/javascript" src="./data/date.js"></script>
 <script type="text/javascript" src="./data/coverage.js"></script>
 <script type="text/javascript" src="./data/brgy.js"></script>
-<script type="text/javascript" src="./functions/functions.js"></script>
 
 <div id="mapid">
 
@@ -629,25 +624,25 @@
 
 <script>
 
-L.TopoJSON = L.GeoJSON.extend({
+    L.TopoJSON = L.GeoJSON.extend({
         addData: function (data) {
-          var geojson, key;
-          if (data.type === "Topology") {
-            for (key in data.objects) {
-              if (data.objects.hasOwnProperty(key)) {
-                geojson = topojson.feature(data, data.objects[key]);
-                L.GeoJSON.prototype.addData.call(this, geojson);
-              }
+            var geojson, key;
+            if (data.type === "Topology") {
+                for (key in data.objects) {
+                    if (data.objects.hasOwnProperty(key)) {
+                        geojson = topojson.feature(data, data.objects[key]);
+                        L.GeoJSON.prototype.addData.call(this, geojson);
+                    }
+                }
+                return this;
             }
+            L.GeoJSON.prototype.addData.call(this, data);
             return this;
-          }
-          L.GeoJSON.prototype.addData.call(this, data);
-          return this;
         }
-      });
-      L.topoJson = function (data, options) {
+    });
+    L.topoJson = function (data, options) {
         return new L.TopoJSON(data, options);
-      };
+    };
 
 
 
@@ -688,7 +683,7 @@ L.TopoJSON = L.GeoJSON.extend({
         opacity: .75,
         color: 'black',
         dashArray: '3',
-        fillOpacity: 0
+        fillOpacity: .75
     };
 
     var group1 = L.featureGroup().addTo(map);
@@ -760,15 +755,17 @@ L.TopoJSON = L.GeoJSON.extend({
 
 
     var vectorGrid = L.vectorGrid.slicer(brgy_daya, {
+        pane: "boundarypane",
         maxZoom: 15,
         minZoom: 10,
         rendererFactory: L.canvas.tile,
-    getFeatureId: function(f){
-            return f.properties.id;
+        getFeatureId: function (f) {
+            return f.properties.NAME_3;
         },
-    //     vectorTileLayerName: 'test',
+        //     vectorTileLayerName: 'test',
         vectorTileLayerStyles: {
             brgy: {
+                fill:true,
                 fillColor: 'white',
                 weight: 1,
                 color: 'black',
@@ -779,13 +776,7 @@ L.TopoJSON = L.GeoJSON.extend({
     });
 
 
-    console.log('vectorGrid :>> ', vectorGrid);
 
-    // var vectorGrid = L.topoJson(brgy_daya, {
-    //     style: style1,
-    //     onEachFeature: onEachFeature,
-    //     pane: 'boundarypane'
-    // })
 
 
 
@@ -793,19 +784,19 @@ L.TopoJSON = L.GeoJSON.extend({
         style: style1,
         onEachFeature: onEachFeature,
         pane: 'boundarypane'
-    })
+    });
 
     var provincialLayer = L.topoJson(provincialdata, {
         style: style1,
         onEachFeature: onEachFeature,
         pane: 'boundarypane'
-    })
+    });
 
     var regionalLayer = L.topoJson(regionaldata, {
         style: style1,
         onEachFeature: onEachFeature,
         pane: 'boundarypane'
-    })
+    });
 
 
     // // add initial overlay 
@@ -1085,7 +1076,7 @@ L.TopoJSON = L.GeoJSON.extend({
         var div = L.DomUtil.create('div', 'info legend');
 
         // loop through our density intervals and generate a label with a colored square for each interval
-        div.innerHTML = "<div onmouseover='disableMapInteraction()' onmouseout='enableMapInteraction()'><img class='img-valign' src='./icons/opacity.png' style='height: 13.64px;'> <span>Boundary Opacity</span><br><img class='img-valign' src='./icons/minus.png' style='margin-top:-13.64;height: 13.64px;'><input type='range' min='0' max='100' value='0' class='slider' id='1myRange' style='width:129px;'><img class='img-valign' src='./icons/plus.png' style='margin-top:-13.64;height: 13.64px;'></div>";
+        div.innerHTML = "<div onmouseover='disableMapInteraction()' onmouseout='enableMapInteraction()'><img class='img-valign' src='./icons/opacity.png' style='height: 13.64px;'> <span>Boundary Opacity</span><br><img class='img-valign' src='./icons/minus.png' style='margin-top:-13.64;height: 13.64px;'><input type='range' min='0' max='100' value='75' class='slider' id='1myRange' style='width:129px;'><img class='img-valign' src='./icons/plus.png' style='margin-top:-13.64;height: 13.64px;'></div>";
 
         return div;
     };
@@ -1114,19 +1105,68 @@ L.TopoJSON = L.GeoJSON.extend({
 
     var slider = document.getElementById("myRange");
 
+    // slider for heatmap
     slider.oninput = function () {
         var fillOpacity = this.value / 100
         document.getElementsByClassName("leaflet-overlay-pane")[0].style.opacity = fillOpacity.toString();
+
 
     }
 
     var slider = document.getElementById("1myRange");
 
+    // slider for boundaries
     slider.oninput = function () {
         geojson.setStyle({
 
-            fillOpacity: this.value / 100
+            fillOpacity: this.value / 100,
+            opacity: this.value / 100
         });
+
+
+        if (map.hasLayer(vectorGrid)) {
+            map.removeLayer(vectorGrid);
+            // console.log(vectorGrid.getFeatureID);
+            // vectorGrid.setFeatureStyle( function (f) {
+            //         return f.properties.NAME_3;
+            //     },{
+            //             fill:true,
+            //             fillColor: 'red',
+            //             weight: 1,
+            //             color: 'red',
+            //             dashArray: '3',
+            //             fillOpacity: this.value / 100,
+            //             opacity: this.value / 100
+            //         });
+
+
+
+
+            vectorGrid = L.vectorGrid.slicer(brgy_daya, {
+                pane: "boundarypane",
+                maxZoom: 15,
+                minZoom: 10,
+                rendererFactory: L.canvas.tile,
+                getFeatureId: function (f) {
+                    return f.properties.NAME_3;
+                },
+                //     vectorTileLayerName: 'test',
+                vectorTileLayerStyles: {
+                    brgy: {
+                        fill:true,
+                        fillColor: 'white',
+                        weight: 1,
+                        color: 'black',
+                        dashArray: '3',
+                        fillOpacity: this.value / 100,
+                        opacity: this.value / 100
+                    }
+                }
+            }).addTo(map);
+
+        }
+
+
 
     }
 

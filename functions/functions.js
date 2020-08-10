@@ -155,9 +155,9 @@
         return {
             fillColor: getColor(feature.properties.covidcases),
             weight: 1,
-            opacity: .1,
-            color: 'white',
-            dashArray: '3',
+            opacity: .75,
+            color: 'black',
+            dashArray: '1',
             fillOpacity: opacity
         };
     }
@@ -167,10 +167,10 @@
         
         var opacity
         if (document.getElementById("1myRange") != null) {
-            document.getElementById("1myRange").value = 0;
+            document.getElementById("1myRange").value = 75;
             opacity = document.getElementById("1myRange").value / 100;
         } else {
-            opacity = "0";
+            opacity = "75";
 
         }
 
@@ -224,6 +224,7 @@
 
         if (map.hasLayer(vectorGrid)) {
             map.removeLayer(vectorGrid);
+            console.log('w');
         }
 
         if (layer == 'locnone') {
