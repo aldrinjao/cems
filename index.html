@@ -27,7 +27,7 @@
 <script type="text/javascript" src="./data/provincialdata.js"></script>
 <script type="text/javascript" src="./data/coverage.js"></script>
 <script type="text/javascript" src="./data/brgy.js"></script>
-
+<div>
 <div id="mapid">
 
 
@@ -445,8 +445,8 @@
             <div id="locprov" class='boundarybutton bbright' onclick="locButtonSelected(this)">Province</div>
             <div id="locmun" class='boundarybutton bbleft selected' onclick="locButtonSelected(this)">Municipality</div>
             <div id="locbrg" class='boundarybutton bbright disabledButton' onclick="checkIfZoomed();">Barangay</div>
-            <div id="locnone" class='boundarybutton bbleft' style="margin-left: 25%;" onclick="locButtonSelected(this)">
-                None</div>
+            <!-- <div id="locnone" class='boundarybutton bbleft' style="margin-left: 25%;" onclick="locButtonSelected(this)">
+                None</div> -->
 
         </div>
 
@@ -507,7 +507,6 @@
             </div>
             <p class="clear">&nbsp;</p>
 
-
             <!-- 
             <div style="margin:10px">
                 <div style="float: left;">
@@ -522,9 +521,52 @@
                         reports there are around the area.</span>
                 </div>
             </div> -->
-
+            <div style="margin:10px">
+                <div style="float: left;">
+                    <input class="img-valign" type="checkbox" id="heatmapcbox" onclick="toggleHeatmap()" checked>
+                    <!-- <img class="img-valign" src='./icons/green.png' style="width: 20px;"> -->
+                </div>
+                <div style="float: left;width:70%;margin-left:5px;" class="clickabletitle tooltip">Heatmap
+                    <span class="tooltiptext tooltiptextincident">Toggles between creating a heatmap for the incidents</span>
+                </div>
+            </div>
+            <p class="clear">&nbsp;</p>
+            <div style="margin:10px">
+                <div style="float: left;">
+                    <input class="img-valign" type="checkbox" id="markercbox"  onclick="toggleMarkers()" checked>
+                    <!-- <img class="img-valign" src='./icons/green.png' style="width: 20px;"> -->
+                </div>
+                <div style="float: left;width:70%;margin-left:5px;" class="clickabletitle tooltip" >Markers
+                    <span class="tooltiptext tooltiptextincident">Toggles between creating a heatmap for the incidents</span>
+                </div>
+            </div>
+            <p class="clear">&nbsp;</p>
         </div>
 
+
+
+        <div id="govResponsePanel">
+            <div style="width: 100%;margin: auto;width: 100%;" class="tooltip">
+                <span style="font-size: 16px;padding:10px;" class="clickabletitle">Government Response</span>
+                <span class="tooltiptext">Gov Response</span>
+
+            </div>
+
+            <div style="margin:10px">
+                <div style="float: left;">
+                    <input class="img-valign" type="checkbox" id="govcbox" onclick="markerCheckBox()">
+                    <img class="img-valign" src='./icons/green.png' style="width: 20px;">
+                </div>
+                <div style="float: left;width:70%;margin-left:5px;" class="clickabletitle tooltip">Government Response
+                    <span class="tooltiptext tooltiptextincident">Government Respose</span>
+                </div>
+            </div>
+
+
+
+
+
+        </div>
 
         <div id="dohPanel">
             <div style="width: 100%;margin: auto;width: 100%;" class="tooltip">
@@ -620,6 +662,12 @@
 
 
 </div>
+</div>
+
+<div id="aaaa" >
+    asdasdasd
+</div>
+
 
 
 <script>
@@ -654,7 +702,11 @@
         renderer: L.canvas(),
         zoomControl: false,
         minZoom: 5,
-        maxZoom: 15
+        maxZoom: 15,    dragging: !L.Browser.mobile,
+    tap: !L.Browser.mobile,
+    dragging: !L.Browser.mobile,
+    tap: !L.Browser.mobile
+
     }
 
     var map = L.map('mapid', mapOptions).setView([12.5995, 122.9842], 6);
@@ -1087,6 +1139,8 @@
     }).addTo(map);
 
     L.control.layers(baseMaps, {}, { position: 'topright' }).addTo(map);
+
+
 
 
 
